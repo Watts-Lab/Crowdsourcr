@@ -9,7 +9,7 @@
     <script src="/static/js/bootstrap3.min.js"></script>
     <script src="/static/js/autoexpand.js"></script>
     <script src="/static/js/mixins.js"></script>
-    <script src="/static/js/simplemodels.js?version=2021_01_30V3"></script>
+    <script src="/static/js/simplemodels.js?version=2021_02_05"></script>
     <script src="/static/js/hit.js?version=2020_04_01"></script>
     <style>
       .help {
@@ -283,7 +283,7 @@
 	        <%= questiontext %> 
 	        <% if (helptext) { %><div class="help">?</div><% } %>
 	      </label>
-	      <input class="form-control" type="number" name="<%= varname %>"/>
+	      <input class="form-control" type="number" name="<%= fullVarname %>"/>
       </div>
     </script>
 
@@ -293,7 +293,7 @@
 	        <%= questiontext %> 
 	        <% if (helptext) { %><div class="help">?</div><% } %>
 	      </label>
-	      <textarea class="form-control" name="<%= varname %>"></textarea>
+	      <textarea class="form-control" name="<%= fullVarname %>"></textarea>
       </div>
     </script>
 
@@ -302,8 +302,8 @@
         <label> <%= questiontext %> </label>
         <% if (helptext) { %><div class="help">?</div><% } %>
 
-        <div class="radio"><label><input type="radio" name="<%= varname %>" value="sureLabel" onchange="document.getElementById('<%= varname %>:details').style.display='block'" /><%= options.sureLabel %></label> <input type="text" class="form-control" style="display:none" id="<%= varname %>:details" name="<%= varname %>:details" placeholder="Type here"> </div>
-        <div class="radio"><label><input type="radio" name="<%= varname %>" value="unsureLabel" onchange="document.getElementById('<%= varname %>:details').style.display='none'"/><%= options.unsureLabel %></label></div>
+        <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="sureLabel" onchange="this.parentNode.parentNode.querySelector('input[type=text]').style.display='block'" /><%= options.sureLabel %></label> <input type="text" class="form-control" style="display:none"  placeholder="<%= options.sureLabelPlaceholder %>"> </div>
+        <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="unsureLabel" onchange="this.parentNode.parentNode.querySelector('input[type=text]').style.display='none'"/><%= options.unsureLabel %></label></div>
 
       </div>
    </script>
@@ -319,7 +319,7 @@
           Browse <input type="file" hidden accept="image/*"  onchange="showMyImage(this,$(this))">
         </label>
         <br>
-        <input type="hidden" name="<%= varname %>"/>
+        <input type="hidden" name="<%= fullVarname %>"/>
         <img class="img-thumbnail" style="display:none" src="" alt="image"/>           
       </div>
     </script>
@@ -330,7 +330,7 @@
 	        <%= questiontext %> 
 	        <% if (helptext) { %><div class="help">?</div><% } %>
 	      </label>
-	      <% _.each(content, function(choice) { %> <div class="radio"><label><input type="radio" name="<%= varname %>" value="<%= choice.value %>"/><%= choice.text %></label></div> <% }); %>
+	      <% _.each(content, function(choice) { %> <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="<%= choice.value %>"/><%= choice.text %></label></div> <% }); %>
       </div>
     </script>
 
@@ -340,7 +340,7 @@
 	        <%= questiontext %> 
 	        <% if (helptext) { %><div class="help">?</div><% } %>
 	      </label>
-		  <select name="<%= varname %>">
+		  <select name="<%= fullVarname %>">
 		  <option value="">Please make a selection</option>
 	      <% _.each(content, function(choice) { %> <option value="<%= choice.value %>"><%= choice.text %></option> <% }); %>
 		  </select>
@@ -354,24 +354,24 @@
 	        <tr>
 	          <% if (options.lowLabel) { %><th></th><% } %>
 	          <% _.each(content, function(choice) { %>
-	          <th><label for="<%= varname + "_" + choice.value %>"><%= choice.text %></label></th>
+	          <th><label for="<%= fullVarname + "_" + choice.value %>"><%= choice.text %></label></th>
 	          <% }); %>
 	          <% if (options.highLabel) { %><th></th><% } %>
 	          <% if (options.outsideCategories) { %>
 	          <th><div style="display: block; width: 2em;"></div></th>
-	          <% _.each(options.outsideCategories, function(cat) { %><th><label for="<%= varname + "_" + cat %>"><%= cat %></label></th><% }); %>
+	          <% _.each(options.outsideCategories, function(cat) { %><th><label for="<%= fullVarname + "_" + cat %>"><%= cat %></label></th><% }); %>
 	          <% } %>
 	        </tr>
 	        <tr>
 	          <% if (options.lowLabel) { %><td><%= options.lowLabel %></td><% } %>
 	          <% _.each(content, function(choice) { %>
-  	        <td><input id="<%= varname + "_" + choice.value %>" type="radio" name="<%= varname %>" value="<%= choice.value %>"/></td>
+  	        <td><input id="<%= fullVarname + "_" + choice.value %>" type="radio" name="<%= fullVarname %>" value="<%= choice.value %>"/></td>
 	          <% }); %>
 	          <% if (options.highLabel) { %><td><%= options.highLabel %></td><% } %>
 	          <% if (options.outsideCategories) { %>
 	          <th><div style="display: block; width: 2em;"></div></th>
 	          <% _.each(options.outsideCategories, function(cat) { %>
-  	        <td><input id="<%= varname + "_" + cat %>" type="radio" name="<%= varname %>" value="<%= cat %>"/></td>
+  	        <td><input id="<%= fullVarname + "_" + cat %>" type="radio" name="<%= fullVarname %>" value="<%= cat %>"/></td>
 	          <% }); %>
 	          <% } %>
 	        </tr>
@@ -387,10 +387,10 @@
 	      <%     var val = content[choice].hasOwnProperty('__val__') ? content[choice]['__val__'] : ''; %>
 	      <div class="radio">
 	        <label>
-	          <input type="radio" nesting-level="<%= n %>" name="<%= '__' + varname + '__' + n %>" value="<%= val %>"/><%= choice %>
+	          <input type="radio" nesting-level="<%= n %>" name="<%= '__' + fullVarname + '__' + n %>" value="<%= val %>"/><%= choice %>
 	        </label>
 	        <% if (!content[choice].hasOwnProperty('__val__')) { %>
-	        <%= generator(content[choice], template, n, questiontext, varname) %>
+	        <%= generator(content[choice], template, n, questiontext, fullVarname) %>
 	        <% } %>
 	      </div> 
 	      <% } %>

@@ -19,75 +19,93 @@ class XMLTask(object) :
         self.documents = self.root.find('documents')
         self.docs = self.get_documents()
         self.sets = self.root.find('sets')
+
+    def get_iterator(self,obj):
+        #check if there is an iterator
+        dimensions=[[{}]]
+        iterator=obj.find('iterator')
+        if iterator !=None:
+            dimensions=[]
+            for dimension in iterator.find('dimensions').iter('dimension'):
+                singleDimension=[]
+                dimName=dimension.find('name').text
+                for instance in dimension.find('instances').iter('instance'):
+                    singleInstance={}
+                    for kvpair in instance.find('kvpairs').iter('kvpair'):
+                        key=kvpair.find('key').text
+                        value=kvpair.find('value').text
+                        singleInstance["{"+dimName+":"+key+"}"]=value
+                    singleDimension.append(singleInstance)
+                dimensions.append(singleDimension)  
+        return dimensions                          
+
     def get_modules(self):
         def get_help_text(ent) :
             ment = ent.find('helptext')
             return ment.text if ment != None else None
         encounteredModuleNames=set()    
         for module in self.modules.iter('module'):
-            if module.find('name').text in encounteredModuleNames:
-                raise Exception("Module "+module.find('name').text+" is defined more than once.")
-            encounteredModuleNames.add(module.find('name').text)
-            module_out = {'header' : module.find('header').text,
-                          'name' : module.find('name').text,
-                          'contentUpdate' : module.find('contentUpdate').text if module.find('contentUpdate') != None else None,
+            #check if there is an iterator
+            mDimensions=self.get_iterator(module)
+            #now iterate over the product of all dimensions
+            for D in product(*mDimensions):
+                modName=module.find('name').text
+                modHeader=module.find('header').text
+                modContentUpdate=module.find('contentUpdate').text
+                for instance in D:
+                    for key in instance:
+                        modName=modName.replace(key,instance[key])
+                        modHeader=modHeader.replace(key,instance[key])
+                        modContentUpdate=modContentUpdate.replace(key,instance[key])
+                if modName in encounteredModuleNames:
+                    raise Exception("Module "+modName+" is defined more than once.")
+                encounteredModuleNames.add(modName)
+                module_out = {'header' : modHeader,
+                          'name' : modName,
+                          'contentUpdate' : modContentUpdate if module.find('contentUpdate') != None else None,
                           'questions' : []}
-            encounteredVarNames=set()                  
-            for question in module.find('questions').iter('question'):
-                #check if there is an iterator
-                dimensions=[[{}]]
-                iterator=question.find('iterator')
-                if iterator !=None:
-                    dimensions=[]
-                    for dimension in iterator.find('dimensions').iter('dimension'):
-                        singleDimension=[]
-                        dimName=dimension.find('name').text
-                        for instance in dimension.find('instances').iter('instance'):
-                            singleInstance={}
-                            for kvpair in instance.find('kvpairs').iter('kvpair'):
-                                key=kvpair.find('key').text
-                                value=kvpair.find('value').text
-                                singleInstance["{"+dimName+":"+key+"}"]=value
-                            singleDimension.append(singleInstance)
-                        dimensions.append(singleDimension)                            
-                #now iterate over the product of all dimensions
-                for D in product(*dimensions):
-                    varname=question.find('varname').text
-                    for instance in D:
-                        for key in instance:
-                            varname=varname.replace(key,instance[key])
-                    #now do the question
-                    if varname in encounteredVarNames:
-                        raise Exception("Variable "+varname+" in module "+module.find('name').text+" is defined more than once.")
-                    encounteredVarNames.add(varname)
-                    lexedCondition=None                        
-                    if question.find('condition') != None:
-                        conditionStr=question.find('condition').text
+                encounteredVarNames=set()                  
+                for question in module.find('questions').iter('question'):
+                    #check if there is an iterator
+                    dimensions=self.get_iterator(question)
+                    #now iterate over the product of all dimensions
+                    for D in product(*dimensions):
+                        varname=question.find('varname').text
                         for instance in D:
                             for key in instance:
-                                conditionStr=conditionStr.replace(key,instance[key])
-                        lex = Lexer()
-                        status = Status()
-                        if not lex.can_import(conditionStr, status):
-                            raise Exception(status.error)
-                        lexedCondition=jsonpickle.encode(lex)
-                    questionText=question.find('questiontext').text
-                    for instance in D:
-                        for key in instance:
-                            questionText=questionText.replace(key,instance[key])
-                    helpText=get_help_text(question)
-                    if helpText!=None:
-                        for instance in D:
-                            for key in instance:
-                                helpText=helpText.replace(key,instance[key])
-                    options=self.get_options(question)
-                    if options!=None:
-                        for i in options:
+                                varname=varname.replace(key,instance[key])
+                        #now do the question
+                        if varname in encounteredVarNames:
+                            raise Exception("Variable "+varname+" in module "+module.find('name').text+" is defined more than once.")
+                        encounteredVarNames.add(varname)
+                        lexedCondition=None                        
+                        if question.find('condition') != None:
+                            conditionStr=question.find('condition').text
                             for instance in D:
                                 for key in instance:
-                                    if type(options[i]) is not list:
-                                        options[i]=options[i].replace(key,instance[key])
-                    module_out['questions'].append({'varname' : varname,
+                                    conditionStr=conditionStr.replace(key,instance[key])
+                            lex = Lexer()
+                            status = Status()
+                            if not lex.can_import(conditionStr, status):
+                                raise Exception(status.error)
+                            lexedCondition=jsonpickle.encode(lex)
+                        questionText=question.find('questiontext').text
+                        for instance in D:
+                            for key in instance:
+                                questionText=questionText.replace(key,instance[key])
+                        helpText=get_help_text(question)
+                        if helpText!=None:
+                            for instance in D:
+                                for key in instance:
+                                    helpText=helpText.replace(key,instance[key])
+                        options=self.get_options(question)
+                        if options!=None:
+                            for i in options:
+                                for instance in D:
+                                    for key in instance:
+                                        if type(options[i]) is not list:
+                                            options[i]=options[i].replace(key,instance[key])
+                        module_out['questions'].append({'varname' : varname,
                                                 'condition' : lexedCondition,
                                                 'questiontext' : questionText,
                                                 'helptext' : helpText,
@@ -97,7 +115,8 @@ class XMLTask(object) :
                                                 'options' : options,
                                                 'content' : Question.parse_content_from_xml(question.find('valuetype').text,
                                                                                             question.find('content'))})
-            yield module_out
+                yield module_out
+
     def get_options(self, qelt) :
         opts = {}
         optelt = qelt.find('options')

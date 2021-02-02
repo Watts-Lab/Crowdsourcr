@@ -64,7 +64,7 @@ var CType = Model.extend({
 	      sub_disp.html(self.display_template);
 	      this.el_display_props = sub_disp.find('[data-prop]');
 	      this.question_container = sub_disp.find('.question-display-container:first');
-	      this.questionlist.renderDisplay(this.question_container);
+	      this.questionlist.renderDisplay(this.name,this.question_container);
 	      this.el.append(sub_disp);
 	      this.hide(true); // updatesdisplay, too
 	      this.el.find(".ctype-when-hidden").on("click", function () {
@@ -114,8 +114,6 @@ var check_condition_single = function (condition, vals, status) {
         return true;
     }
     if (condition.op=="EXISTS"){
-        console.log(condition);
-        console.log(vals);
         if (condition.variables[0].slice(-1)==="*"){
             var prefix=condition.variables[0].substring(0,condition.variables[0].length-1);
             for(var v in vals){
@@ -248,7 +246,7 @@ var QuestionList = Model.extend({
 	      this.renderedquestions = [];
 	      this.holders = [];
     },
-    renderDisplay : function(el) {
+    renderDisplay : function(moduleName,el) {
         this.el = $(el);
 	    this.el.empty();
 	    var rendered_ref = this.renderedquestions;
@@ -258,7 +256,7 @@ var QuestionList = Model.extend({
               question_holder.change(function () {
                   checkConditions(rendered_ref, holders_ref);
               });
-              var question = new Question(question_holder, q);
+              var question = new Question(question_holder, q, moduleName);
 	          question.renderDisplay();
 	          this.el.append(question_holder);
 	          this.holders.push(question_holder);
@@ -296,8 +294,9 @@ var QuestionList = Model.extend({
 });
 
 var Question = Model.extend({
-    constructor : function(el, question) {
-	      var new_question = undefined;
+    constructor : function(el, question, moduleName) {
+          var new_question = undefined;
+          question.fullVarname=moduleName+":"+question.varname;
 	      switch (question.valuetype) {
 	      case 'numeric':
               new_question = new NumericQuestion(el, question);
@@ -331,6 +330,7 @@ var Question = Model.extend({
 	      new_question.valuetype = question.valuetype;
 	      new_question.questiontext = question.questiontext;
 	      new_question.helptext = question.helptext;
+	      new_question.fullVarname = question.fullVarname;
 	      new_question.varname = question.varname;
           new_question.condition = question.condition;
 	      new_question.content = question.content;
@@ -347,7 +347,8 @@ var Question = Model.extend({
 	      return {
 	          questiontext : this.questiontext,
 	          valuetype : this.valuetype,
-	          varname : this.varname,
+              varname : this.varname,
+              fullVarname : this.fullVarname,
 	          content : this.content,
 	          helptext : this.helptext,
 	          options : this.options
@@ -527,7 +528,7 @@ var CategoricalQuestion = Question.extend({
 						                                       this.nested_display_template, 
 						                                       0, 
 						                                       this.questiontext, 
-						                                       this.varname));
+						                                       this.fullVarname));
 	          rendered_nest
 		            .find('input[type="radio"]')
 		            .change(function() {
@@ -577,7 +578,7 @@ var CategoricalQuestion = Question.extend({
 	      el.parent().siblings('div.form-group').slideDown();
     },
     drawNesting : function() {
-	      return nestedTemplate(this.nest, this.nested_display_template, 0, this.questiontext, this.varname);
+	      return nestedTemplate(this.nest, this.nested_display_template, 0, this.questiontext, this.fullVarname);
     },
     validate: function () {
         var resp = this.response();
@@ -592,10 +593,10 @@ var CategoricalQuestion = Question.extend({
     } 
 });
 
-function nestedTemplate(nest, template, n, questiontext, varname) {
+function nestedTemplate(nest, template, n, questiontext, fullVarname) {
     if (nest === undefined) return '';
 
-    return _.template(template, { varname : varname,
+    return _.template(template, { fullVarname : fullVarname,
 				                          questiontext : questiontext,
 				                          content : nest,
 				                          generator : nestedTemplate,
