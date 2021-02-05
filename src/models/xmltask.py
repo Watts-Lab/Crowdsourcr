@@ -51,18 +51,22 @@ class XMLTask(object) :
             for D in product(*mDimensions):
                 modName=module.find('name').text
                 modHeader=module.find('header').text
-                modContentUpdate=module.find('contentUpdate').text
                 for instance in D:
                     for key in instance:
                         modName=modName.replace(key,instance[key])
                         modHeader=modHeader.replace(key,instance[key])
+                modContentUpdate=None
+                if module.find('contentUpdate') != None:
+                  modContentUpdate=module.find('contentUpdate').text
+                  for instance in D:
+                      for key in instance:
                         modContentUpdate=modContentUpdate.replace(key,instance[key])
                 if modName in encounteredModuleNames:
                     raise Exception("Module "+modName+" is defined more than once.")
                 encounteredModuleNames.add(modName)
                 module_out = {'header' : modHeader,
                           'name' : modName,
-                          'contentUpdate' : modContentUpdate if module.find('contentUpdate') != None else None,
+                          'contentUpdate' : modContentUpdate,
                           'questions' : []}
                 encounteredVarNames=set()                  
                 for question in module.find('questions').iter('question'):
