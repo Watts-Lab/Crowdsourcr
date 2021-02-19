@@ -196,7 +196,7 @@ class AutoCompleteQuestion(AbstractQuestion) :
     typeName = 'autocomplete'
     @staticmethod
     def parse_content_from_xml(question_content=None):
-        return {'surelabel' : question_content.find('surelabel').text, 'unsurelabel' : question_content.find('unsurelabel').text}
+        return {'surelabel' : question_content.find('surelabel').text, 'unsurelabel' : question_content.find('unsurelabel').text, 'autoCompleteUrl':question_content.find('autoCompleteUrl').text}
     def valid_response(self, response) :
         return response.get('response', False)
 

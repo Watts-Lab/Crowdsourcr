@@ -7,10 +7,11 @@
     <script src="/static/js/jquery-3.4.1.min.js"></script>
     <script src="/static/js/underscore_1.5.1.min.js"></script>
     <script src="/static/js/bootstrap3.min.js"></script>
+    <script src="/static/js/bootstrap-autocomplete.min.js?version=2021_02_19v2"></script>
     <script src="/static/js/autoexpand.js"></script>
     <script src="/static/js/mixins.js"></script>
-    <script src="/static/js/simplemodels.js?version=2021_02_05"></script>
-    <script src="/static/js/hit.js?version=2020_04_01"></script>
+    <script src="/static/js/simplemodels.js?version=2021_02_19v2"></script>
+    <script src="/static/js/hit.js?version=2021_02_19v2"></script>
     <style>
       .help {
       margin-left: 2em;
@@ -302,7 +303,7 @@
         <label> <%= questiontext %> </label>
         <% if (helptext) { %><div class="help">?</div><% } %>
 
-        <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="sureLabel" onchange="this.parentNode.parentNode.querySelector('input[type=text]').style.display='block'" /><%= options.sureLabel %></label> <input type="text" class="form-control" style="display:none"  placeholder="<%= options.sureLabelPlaceholder %>"> </div>
+        <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="sureLabel" onchange="var el=this.parentNode.parentNode.querySelector('input[type=text]'); el.style.display='block';$(el).autoComplete()" /><%= options.sureLabel %></label> <input type="text" class="form-control" style="display:none" data-url="<%= options.autoCompleteUrl %>" autocomplete="off" placeholder="<%= options.sureLabelPlaceholder %>"> </div>
         <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="unsureLabel" onchange="this.parentNode.parentNode.querySelector('input[type=text]').style.display='none'"/><%= options.unsureLabel %></label></div>
 
       </div>
