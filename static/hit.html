@@ -303,7 +303,7 @@
         <label> <%= questiontext %> </label>
         <% if (helptext) { %><div class="help">?</div><% } %>
 
-        <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="sureLabel" onchange="var el=this.parentNode.parentNode.querySelector('input[type=text]'); el.style.display='block';$(el).autoComplete()" /><%= options.sureLabel %></label> <input type="text" class="form-control" style="display:none" data-url="<%= options.autoCompleteUrl %>" autocomplete="off" placeholder="<%= options.sureLabelPlaceholder %>"> </div>
+        <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="sureLabel" onchange="var el=this.parentNode.parentNode.querySelector('input[type=text]'); el.style.display='block';$(el).autoComplete()" /><%= options.sureLabel %></label><div style="position:relative;"> <input onfocus="$(this).autoComplete();" type="text" class="form-control" style="display:none" data-url="<%= options.autoCompleteUrl %>" autocomplete="off" placeholder="<%= options.sureLabelPlaceholder %>"></div> </div>
         <div class="radio"><label><input type="radio" name="<%= fullVarname %>" value="unsureLabel" onchange="this.parentNode.parentNode.querySelector('input[type=text]').style.display='none'"/><%= options.unsureLabel %></label></div>
 
       </div>
