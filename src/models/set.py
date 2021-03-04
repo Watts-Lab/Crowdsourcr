@@ -11,6 +11,7 @@ class SET(object):
                 'member' : self.member}
 
     def hasMember(self, item):
-        print(self.name)
-        print(self.member)
-        print(item)
+        print('name', self.name)
+        print('member', self.member)
+        print('item', item)
+        raise Exception('hasMember')
