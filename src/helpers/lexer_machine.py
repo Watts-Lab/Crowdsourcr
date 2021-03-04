@@ -259,7 +259,7 @@ class Lexer:
         self.setlist=[]
 
     def __str__(self):
-        return "conditions: " + str(self.conditions) + " fragments: " + str([str(f) for f in self.fragments]) + " logical: " + str(self.logical)
+        return "conditions: " + str([str(c) for c in self.conditions]) + " fragments: " + str([str(f) for f in self.fragments]) + " logical: " + str(self.logical)
 
     def can_import(self, condition_str, status):
         if self.can_import_worker(0,condition_str,status):
@@ -401,6 +401,7 @@ class Lexer:
         status.error = None
         condition_values = []
         for c in self.conditions:
+            print(c)
             condition_values.append(c.check_condition_single_cond(variables,sets, status))
             if status.error is not None:
                 return False
