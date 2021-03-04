@@ -124,6 +124,9 @@ class SingleCondition:
                 return
             self.values_string.append(argument)
 
+    def __str__(self):
+        return self.serialize_single_cond()
+
     def serialize_single_cond(self):
         if self.op!="NOTINSET" and self.op!="INSET":
             sb = "+".join(self.variables)
