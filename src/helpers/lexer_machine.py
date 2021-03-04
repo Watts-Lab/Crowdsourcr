@@ -224,6 +224,8 @@ class SingleCondition:
             status.error = f"cannot check condition {self.serialize_single_cond()}: set {self.variables[1]} is undefined"
             return False
         LHS=str(all_variables[self.variables[0]])
+        print(all_sets)
+        print(all_sets[self.variables[1]])
         return not all_sets[self.variables[1]].hasMember(LHS);
 
     def check_inset_cond(self, all_variables,all_sets, status):
@@ -404,7 +406,6 @@ class Lexer:
         status.error = None
         condition_values = []
         for c in self.conditions:
-            print(c)
             condition_values.append(c.check_condition_single_cond(variables,sets, status))
             if status.error is not None:
                 return False
