@@ -3,6 +3,7 @@ import pymongo
 from models import CResponse, CType, SET
 from helpers import CustomEncoder, Lexer, Status
 import jsonpickle
+import json
 
 class CResponseController(object):
     def __init__(self, db):
@@ -96,6 +97,7 @@ class CResponseController(object):
                             continue
                         else:
                             status=Status()
+                            print(json.dumps(condition))
                             if condition.check_conditions(allVariables, allSets, status):
                                 #this task was shown to the worker
                                 includeTask=True
