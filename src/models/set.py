@@ -9,9 +9,3 @@ class SET(object):
     def serialize(self):
         return {'name' : self.name,
                 'member' : self.member}
-
-    def hasMember(self, item):
-        print('name', self.name)
-        print('member', self.member)
-        print('item', item)
-        raise Exception('hasMember')

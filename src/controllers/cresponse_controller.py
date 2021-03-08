@@ -96,7 +96,6 @@ class CResponseController(object):
                             continue
                         else:
                             status=Status()
-                            print(condition)
                             if condition.check_conditions(allVariables, allSets, status):
                                 #this task was shown to the worker
                                 includeTask=True

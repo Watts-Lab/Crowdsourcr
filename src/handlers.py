@@ -578,7 +578,7 @@ class CResponseHandler(BaseHandler):
 
                     allSets=dict()
                     for s in condition.setlist:
-                        allSets[s]=Set(self.db,s)
+                        allSets[s]=self.set_controller.get_set_members(s)
                     if has_error:
                         skip+=1
                     else:

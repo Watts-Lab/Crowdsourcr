@@ -16,3 +16,5 @@ class SetController(object):
         d = self.db.ctasks.find_one({'name' : name})
         set = SET.deserialize(d)
         return set
+    def get_set_members(self,name):
+        return [r['member'] for r in self.db.sets.find({'name':name})]

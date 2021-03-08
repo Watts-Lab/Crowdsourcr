@@ -124,9 +124,6 @@ class SingleCondition:
                 return
             self.values_string.append(argument)
 
-    def __str__(self):
-        return self.serialize_single_cond()
-
     def serialize_single_cond(self):
         if self.op!="NOTINSET" and self.op!="INSET":
             sb = "+".join(self.variables)
@@ -225,8 +222,11 @@ class SingleCondition:
             return False
         LHS=str(all_variables[self.variables[0]])
         print(all_sets)
-        print(all_sets[self.variables[1]])
-        return not all_sets[self.variables[1]].hasMember(LHS);
+        print(LHS)
+        print(self.variables[1])
+        print(LHS not in all_sets[self.variables[1]])
+        raise Exception("stop here")
+        return LHS not in all_sets[self.variables[1]]
 
     def check_inset_cond(self, all_variables,all_sets, status):
         ''' Inputs: all_variables, type {str: str}
@@ -240,7 +240,7 @@ class SingleCondition:
             status.error = f"cannot check condition {self.serialize_single_cond()}: set {self.variables[1]} is undefined"
             return False
         LHS=str(all_variables[self.variables[0]])
-        return all_sets[self.variables[1]].hasMember(LHS);
+        return LHS in all_sets[self.variables[1]]
 
     def check_exists_cond(self, all_variables, status):
         ''' Inputs: all_variables, type {str: str}
@@ -264,7 +264,7 @@ class Lexer:
         self.setlist=[]
 
     def __str__(self):
-        return "conditions: " + str([str(c) for c in self.conditions]) + " fragments: " + str([str(f) for f in self.fragments]) + " logical: " + str(self.logical)
+        return "conditions: " + str(self.conditions) + " fragments: " + str([str(f) for f in self.fragments]) + " logical: " + str(self.logical)
 
     def can_import(self, condition_str, status):
         if self.can_import_worker(0,condition_str,status):
