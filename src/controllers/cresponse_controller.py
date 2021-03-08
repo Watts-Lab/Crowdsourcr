@@ -91,7 +91,7 @@ class CResponseController(object):
                                                             couldBeReached=True
                         allSets=dict()
                         for s in condition.setlist:
-                            allSets[s]=SET(self.db,s)
+                            allSets[s]=[r['member'] for r in self.db.sets.find({'name':s})]
                         if has_error:
                             continue
                         else:
