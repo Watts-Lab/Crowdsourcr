@@ -74,6 +74,8 @@ def calculate_raw_bonus_info(possible_bonus_points, bonusDetails, moduleVarnameV
                     worker_bonus_info[workerid]['exp'].append(bonus_exp)
                 #add explainer for workers who did not answer this question
                 for workerid in questionDetails["possibleWorkers"]:
+                    if workerid not in worker_bonus_info:
+                        worker_bonus_info.setdefault(workerid, {'earned' : 0.0, 'possible' : 1.0*possible_bonus_points,'exp' : []})
                     if workerid not in questionDetails["actualWorkers"]:
                         bonus_exp = 'On task %s, question %s_%s was not shown.' % (task, module, varname)
                         worker_bonus_info[workerid]['exp'].append(bonus_exp)
