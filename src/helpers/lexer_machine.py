@@ -221,11 +221,6 @@ class SingleCondition:
             status.error = f"cannot check condition {self.serialize_single_cond()}: set {self.variables[1]} is undefined"
             return False
         LHS=str(all_variables[self.variables[0]])
-        print(all_sets)
-        print(LHS)
-        print(self.variables[1])
-        print(LHS not in all_sets[self.variables[1]])
-        raise Exception("stop here")
         return LHS not in all_sets[self.variables[1]]
 
     def check_inset_cond(self, all_variables,all_sets, status):
