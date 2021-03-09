@@ -171,7 +171,7 @@ Each category also has an optional parameter ``aprioripermissable`` which can be
         </question>
 
 This parameter matters for bonus calculations: if there is any conditional branching that omits certain tasks or questions 
-that involves any condition with ``aprioripermissable`` variables then the share of agreement for bonus purposes is biased
+that involves any condition with ``aprioripermissable`` variables then the share of agreement for bonus purposes is based
 only on the number of workers who ended up in this branch and not on the number of workers who could have seen this question.
 
 This is used, for example, in the ``elaborate_conditional_tasks.xml`` survey. In that survey, workers are first asked

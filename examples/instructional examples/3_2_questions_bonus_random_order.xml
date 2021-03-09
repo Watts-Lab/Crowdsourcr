@@ -1,0 +1,166 @@
+<xml>
+  <modules>
+    <module>
+      <header>Numbers</header>
+      <name>numbers</name>
+      <questions>
+        <question>
+          <varname>number1</varname>
+          <bonus>threshold:51</bonus>
+          <bonuspoints>2</bonuspoints>
+          <questiontext>Which of the following is the number twenty-two?</questiontext>
+          <helptext>You will get a bonus based on how many other people choose the same thing.</helptext>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>3</text>
+                <value>3</value>
+              </category>
+              <category>
+                <text>17</text>
+                <value>17</value>
+              </category>
+              <category>
+                <text>22</text>
+                <value>22</value>
+              </category>
+              <category>
+                <text>111</text>
+                <value>111</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+        <question>
+          <varname>kidding</varname>
+          <condition>
+            <![CDATA[
+			  number1!=22
+			  ]]>
+          </condition>
+
+          <questiontext>You were kidding, right?</questiontext>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>No</text>
+                <value>0</value>
+              </category>
+              <category>
+                <text>Yes</text>
+                <value>1</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+        <question>
+          <varname>number2</varname>
+          <questiontext>Please type the number 47 in words.</questiontext>
+          <valuetype>text</valuetype>
+        </question>
+      </questions>
+    </module>
+    <module>
+      <header>Numbers</header>
+      <name>numbersreverse</name>
+      <isomorphicmodule>numbers</isomorphicmodule>
+      <questions>
+        <question>
+          <varname>number2</varname>
+          <questiontext>Please type the number 47 in words.</questiontext>
+          <valuetype>text</valuetype>
+        </question>
+        <question>
+          <varname>number1</varname>
+          <bonus>threshold:51</bonus>
+          <bonuspoints>2</bonuspoints>
+          <questiontext>Which of the following is the number twenty-two?</questiontext>
+          <helptext>You will get a bonus based on how many other people choose the same thing.</helptext>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>3</text>
+                <value>3</value>
+              </category>
+              <category>
+                <text>17</text>
+                <value>17</value>
+              </category>
+              <category>
+                <text>22</text>
+                <value>22</value>
+              </category>
+              <category>
+                <text>111</text>
+                <value>111</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+        <question>
+          <varname>kidding</varname>
+          <condition>
+            <![CDATA[
+			  number1!=22
+			  ]]>
+          </condition>
+
+          <questiontext>You were kidding, right?</questiontext>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>No</text>
+                <value>0</value>
+              </category>
+              <category>
+                <text>Yes</text>
+                <value>1</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+      </questions>
+    </module>
+  </modules>
+
+  <tasks>
+    <task>
+      <content>numbers.html</content>
+      <taskid>1</taskid>
+      <modules>numbers</modules>
+    </task>
+    <task>
+      <content>numbers.html</content>
+      <taskid>2</taskid>
+      <modules>numbersreverse</modules>
+      <isomorphictask>1</isomorphictask>
+    </task>
+  </tasks>
+  
+  <hits>
+    <hit>
+      <hitid>1</hitid>
+      <tasks>1</tasks>
+    </hit>
+    <hit>
+      <hitid>2</hitid>
+      <tasks>2</tasks>
+    </hit>
+  </hits>
+  
+  <documents>
+    <document>
+      <name>numbers.html</name>
+      <content><![CDATA[
+      <p>In this example we have added a threshold bonus to the first question of the survey. The only visual difference in the survey is the question mark located after 
+      the question text. Hover you mouse over the question mark to view the bonus notification. The concept of a bonus is described in detail in the XML section of 
+      the Crowdsourcr documentation.
+      </p>
+      ]]></content>
+    </document>
+  </documents>
+</xml>

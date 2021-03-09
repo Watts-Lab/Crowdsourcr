@@ -181,16 +181,66 @@ class XMLUploadHandler(BaseHandler):
                     return
                 self.xmltask_controller.dropDB()
                 self.event_controller.add_event("Uploaded: " + uploadedFilename)
+                #keep a list of isomorphic modules and tasks
+                isoModules=dict()
+                isoTasks=dict()
+                isoTaskModules=dict()
                 for module in xmltask.get_modules():
+                    if "isomorphicModule" in module:
+                        if module["isomorphicModule"]!=None:
+                            m1=module["name"]
+                            m2=module["isomorphicModule"]
+                            if m1 not in isoModules:
+                                isoModules[m1]=set()
+                            if m2 not in isoModules:
+                                isoModules[m2]=set()
+                            isoModules[m1].add(m2)
+                            isoModules[m2].add(m1)
                     self.ctype_controller.create(module)
                 for task in xmltask.get_tasks():
+                    if "isomorphicTask" in task:
+                        if task["isomorphicTask"]!=None:
+                            isoTasks[task["taskid"]]=task["isomorphicTask"]
+                    isoTaskModules[task["taskid"]]=task["modules"]
                     self.ctask_controller.create(task)
                 for hit in xmltask.get_hits():
                     self.chit_controller.create(hit)
-                for set in xmltask.get_sets():
-                    self.set_controller.create(set)
+                for sset in xmltask.get_sets():
+                    self.set_controller.create(sset)
                 for name, doc in xmltask.docs.items():
                     self.cdocument_controller.create(name, doc)
+                #now check if isomorphic tasks make sense
+                for taskid in isoTaskModules:
+                    if taskid in isoTasks:
+                        mappedTaskId=isoTasks[taskid]
+                        if len(isoTaskModules[taskid])!=len(isoTaskModules[mappedTaskId]):
+                            raise Exception("task "+taskid+ " is not isomorphic to task "+mappedTaskId+" : different module count")
+                        for i in range(len(isoTaskModules[taskid])):
+                            m1=isoTaskModules[taskid][i]
+                            m2=isoTaskModules[mappedTaskId][i]
+                            #make sure m1 and m2 are isomorphic
+                            lastTouched={m1}
+                            alreadyTouched={m1}
+                            mappedModule=False
+                            while True:
+                                nextLastTouched=set()
+                                for m3 in lastTouched:                                    
+                                    if m3 not in isoModules:
+                                        continue
+                                    if m2 in isoModules[m3]:
+                                        mappedModule=True
+                                        break
+                                    for m4 in isoModules[m3]:
+                                        if m4 not in alreadyTouched:
+                                            alreadyTouched.add(m4)
+                                            nextLastTouched.add(m4)
+                                if mappedModule:
+                                    break
+                                if len(nextLastTouched)==0:
+                                    break
+                                lastTouched=nextLastTouched
+                            if not mappedModule:
+                                raise Exception("task "+taskid+ " is not isomorphic to task "+mappedTaskId+" : module "+m1+" is not isomorphic with module "+m2)
             self.return_json({'success' : True})
         except Exception as x :
             self.return_json({'error' : type(x).__name__ + ": " + str(x)})

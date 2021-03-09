@@ -61,12 +61,16 @@ class XMLTask(object) :
                   for instance in D:
                       for key in instance:
                         modContentUpdate=modContentUpdate.replace(key,instance[key])
+                isomorphicModule=None
+                if module.find('isomorphicmodule') != None:
+                    isomorphicModule=module.find('isomorphicmodule').text
                 if modName in encounteredModuleNames:
                     raise Exception("Module "+modName+" is defined more than once.")
                 encounteredModuleNames.add(modName)
                 module_out = {'header' : modHeader,
                           'name' : modName,
                           'contentUpdate' : modContentUpdate,
+                          'isomorphicModule' : isomorphicModule,
                           'questions' : []}
                 encounteredVarNames=set()                  
                 for question in module.find('questions').iter('question'):
@@ -136,8 +140,12 @@ class XMLTask(object) :
             # first see if there is a corresponding document
             content = task.find('content').text.strip()
             content = self.docs.get(content, content)
+            isomorphicTask=None
+            if task.find('isomorphictask') != None:
+                    isomorphicTask=task.find('isomorphictask').text
             yield {'content' : content,
                    'taskid' : task.find('taskid').text,
+                   'isomorphicTask': isomorphicTask,
                    'modules' : task.find('modules').text.split()}
     def get_hits(self):
         def get_exclusions(hittag):
