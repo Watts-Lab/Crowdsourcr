@@ -64,6 +64,9 @@ class XMLTask(object) :
                 isomorphicModule=None
                 if module.find('isomorphicmodule') != None:
                     isomorphicModule=module.find('isomorphicmodule').text
+                    for instance in D:
+                      for key in instance:
+                        isomorphicModule=isomorphicModule.replace(key,instance[key])
                 if modName in encounteredModuleNames:
                     raise Exception("Module "+modName+" is defined more than once.")
                 encounteredModuleNames.add(modName)
