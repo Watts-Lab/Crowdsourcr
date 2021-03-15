@@ -15,11 +15,11 @@ def mapIsoName(name):
     frags=name.split('_')
     if frags[-1]=="dem":
         frags[-1]="rep"
-        return frags.join('_')
+        return "_".join(frags)
     else:
         if frags[-1]=="rep":
             frags[-1]="dem"
-            return frags.join('_')
+            return "_".join(frags)
         else:
             return None
 
