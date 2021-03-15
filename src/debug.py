@@ -7,9 +7,11 @@ import Settings
 sys.path.insert(0, Settings.CONFIG_PATH)
 import app_config
 sys.path.pop(0)
+config_filename="config_jared.json.production"
 do_implement=False
  
 def main():
+    app_config.populate_config(config_filename)
     db = pymongo.MongoClient()[app_config.db_name]
     print("MODULES:")  
     d=db.ctypes.find({},{'name':1})
