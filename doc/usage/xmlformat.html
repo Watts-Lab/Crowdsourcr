@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>XML Format &#8212; Crowdsourcr 2.2 documentation</title>
     
-  <link rel="stylesheet" href="../_static/css/index.ce93c4bad7c1e5d5e6f0259f1a164f49.css">
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.101715efdecc9b59cb6e1ddfa685c31f.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -19,71 +20,75 @@
 
     
       
-  <link rel="stylesheet"
-    href="../_static/vendor/open-sans_all/1.44.1/index.css">
-  <link rel="stylesheet"
-    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
-    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.6f94ef916480b5a8afd0.js">
+  <link rel="preload" as="script" href="../_static/js/index.d8bbf5861d671d414e1a.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Administration" href="admin.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="docsearch:language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main">
-<div class="container-xl">
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
 
     
+    <a class="navbar-brand" href="../index.html">
+      <p class="title">Crowdsourcr</p>
+    </a>
+    
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
+    
     <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
       <ul id="navbar-main-elements" class="navbar-nav mr-auto">
-        
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="installation.html">Installation</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="running.html">Running</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="concepts.html">Concepts</a>
-        </li>
-        
-        <li class="nav-item ">
-            <a class="nav-link" href="admin.html">Administration</a>
-        </li>
-        
-        <li class="nav-item active">
-            <a class="nav-link" href="">XML Format</a>
-        </li>
-        
+        <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="installation.html">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="running.html">
+  Running
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="concepts.html">
+  Concepts
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="admin.html">
+  Administration
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
+  XML Format
+ </a>
+</li>
+
         
       </ul>
 
-
-      
-
-      <ul class="navbar-nav">
-        
-        
+      <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
       </ul>
     </div>
 </div>
@@ -93,37 +98,54 @@
     <div class="container-xl">
       <div class="row">
           
-          <div class="col-12 col-md-3 bd-sidebar">
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">XML Format</a><ul>
+<li><a class="reference internal" href="#modules">Modules</a></li>
+<li><a class="reference internal" href="#questions">Questions</a><ul>
+<li><a class="reference internal" href="#numeric-questions">Numeric questions</a></li>
+<li><a class="reference internal" href="#text-questions">Text questions</a></li>
+<li><a class="reference internal" href="#categorical-questions">Categorical questions</a></li>
+<li><a class="reference internal" href="#nested-categorical-questions">Nested categorical questions</a></li>
+<li><a class="reference internal" href="#scale-questions">Scale questions</a></li>
+<li><a class="reference internal" href="#image-upload-questions">Image upload questions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tasks">Tasks</a><ul>
+<li><a class="reference internal" href="#dynamic-content">Dynamic content</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#chits">cHits</a><ul>
+<li><a class="reference internal" href="#data-download">Data Download</a></li>
+<li><a class="reference internal" href="#task-conditions">Task Conditions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#conditional-questions">Conditional Questions</a></li>
+<li><a class="reference internal" href="#bonus">Bonus</a><ul>
+<li><a class="reference internal" href="#specifying-a-bonus">Specifying a bonus</a></li>
+<li><a class="reference internal" href="#rewarding-agreement">Rewarding Agreement</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#isomorphic-tasks-and-modules">Isomorphic Tasks and Modules</a></li>
+</ul>
+</li>
+</ul>
 
-<form class="bd-search d-flex align-items-center" action="../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form>
-
-
-<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-
-  <div class="bd-toc-item active">
-  
-
-  <ul class="nav bd-sidenav">
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-        
-      
-      
-    </ul>
-
-</nav>
-          </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+            </div>
+            
           
 
           
@@ -134,85 +156,107 @@
 </div>
 
 <nav id="bd-toc-nav">
-    <ul class="nav section-nav flex-column">
-    
-        <li class="nav-item toc-entry toc-h2">
-            <a href="#modules" class="nav-link">Modules</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h2">
-            <a href="#questions" class="nav-link">Questions</a><ul class="nav section-nav flex-column">
-                
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#numeric-questions" class="nav-link">Numeric questions</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#text-questions" class="nav-link">Text questions</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#categorical-questions" class="nav-link">Categorical questions</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#nested-categorical-questions" class="nav-link">Nested categorical questions</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#scale-questions" class="nav-link">Scale questions</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#image-upload-questions" class="nav-link">Image upload questions</a>
-        </li>
-    
-            </ul>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h2">
-            <a href="#tasks" class="nav-link">Tasks</a><ul class="nav section-nav flex-column">
-                
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#dynamic-content" class="nav-link">Dynamic content</a>
-        </li>
-    
-            </ul>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h2">
-            <a href="#chits" class="nav-link">cHits</a><ul class="nav section-nav flex-column">
-                
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#data-download" class="nav-link">Data Download</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#task-conditions" class="nav-link">Task Conditions</a>
-        </li>
-    
-            </ul>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h2">
-            <a href="#conditional-questions" class="nav-link">Conditional Questions</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h2">
-            <a href="#bonus" class="nav-link">Bonus</a><ul class="nav section-nav flex-column">
-                
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#specifying-a-bonus" class="nav-link">Specifying a bonus</a>
-        </li>
-    
-        <li class="nav-item toc-entry toc-h3">
-            <a href="#rewarding-agreement" class="nav-link">Rewarding Agreement</a>
-        </li>
-    
-            </ul>
-        </li>
-    
-    </ul>
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modules">
+   Modules
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#questions">
+   Questions
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#numeric-questions">
+     Numeric questions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#text-questions">
+     Text questions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#categorical-questions">
+     Categorical questions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#nested-categorical-questions">
+     Nested categorical questions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#scale-questions">
+     Scale questions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#image-upload-questions">
+     Image upload questions
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tasks">
+   Tasks
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dynamic-content">
+     Dynamic content
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#chits">
+   cHits
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#data-download">
+     Data Download
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#task-conditions">
+     Task Conditions
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#conditional-questions">
+   Conditional Questions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#bonus">
+   Bonus
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#specifying-a-bonus">
+     Specifying a bonus
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rewarding-agreement">
+     Rewarding Agreement
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#isomorphic-tasks-and-modules">
+   Isomorphic Tasks and Modules
+  </a>
+ </li>
+</ul>
+
 </nav>
 
 
@@ -220,6 +264,9 @@
           </div>
           
 
+          
+          
+            
           
           <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
               
@@ -375,7 +422,7 @@ categorical response.</p>
 </pre></div>
 </div>
 <p>This parameter matters for bonus calculations: if there is any conditional branching that omits certain tasks or questions
-that involves any condition with <code class="docutils literal notranslate"><span class="pre">aprioripermissable</span></code> variables then the share of agreement for bonus purposes is biased
+that involves any condition with <code class="docutils literal notranslate"><span class="pre">aprioripermissable</span></code> variables then the share of agreement for bonus purposes is based
 only on the number of workers who ended up in this branch and not on the number of workers who could have seen this question.</p>
 <p>This is used, for example, in the <code class="docutils literal notranslate"><span class="pre">elaborate_conditional_tasks.xml</span></code> survey. In that survey, workers are first asked
 for their favorite color (red or blue) and both colors are apriori permissable (meaning there is no right or wrong answer).
@@ -928,6 +975,53 @@ light after choosing one of them. Both color choices are <code class="docutils l
 light tasks is only determined among the users who picked red (blue).</p>
 </div>
 </div>
+<div class="section" id="isomorphic-tasks-and-modules">
+<h2>Isomorphic Tasks and Modules<a class="headerlink" href="#isomorphic-tasks-and-modules" title="Permalink to this headline">¶</a></h2>
+<p>You sometimes want to run tasks which are essentially identical except for question ordering. This poses a problem for
+calculating bonuses because Crowdsourcr has no prior knowledge which tasks should be treated as essentially identical.</p>
+<p>For that purpose, you can specify a task to be isomorphic to another task. Such an example is provided
+in <code class="docutils literal notranslate"><span class="pre">questions_bonus_random_order.xml</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">tasks</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">task</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">content</span><span class="o">&gt;</span><span class="n">numbers</span><span class="o">.</span><span class="n">html</span><span class="o">&lt;/</span><span class="n">content</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">taskid</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">taskid</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">modules</span><span class="o">&gt;</span><span class="n">numbers</span><span class="o">&lt;/</span><span class="n">modules</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">task</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">task</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">content</span><span class="o">&gt;</span><span class="n">numbers</span><span class="o">.</span><span class="n">html</span><span class="o">&lt;/</span><span class="n">content</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">taskid</span><span class="o">&gt;</span><span class="mi">2</span><span class="o">&lt;/</span><span class="n">taskid</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">modules</span><span class="o">&gt;</span><span class="n">numbersreverse</span><span class="o">&lt;/</span><span class="n">modules</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">isomorphictask</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">isomorphictask</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">task</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">tasks</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>In this example task 2 is isomorphic to task 1. Crowdsourcr is smart enough to figure out any transitive relationships. For example,
+if task 3 is isomorphic to 2 and 2 is isomorphic to 1 then all three tasks are isomorphic to each other.</p>
+<p>However, the above XML code is incomplete unless you also define the constitutent modules to be isomorphic to each other. In the
+above example, each task has a single module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">modules</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">header</span><span class="o">&gt;</span><span class="n">Numbers</span><span class="o">&lt;/</span><span class="n">header</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">numbers</span><span class="o">&lt;/</span><span class="n">name</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">questions</span><span class="o">&gt;</span>
+  <span class="p">(</span><span class="o">..</span><span class="p">)</span>
+ <span class="o">&lt;/</span><span class="n">questions</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">header</span><span class="o">&gt;</span><span class="n">Numbers</span><span class="o">&lt;/</span><span class="n">header</span><span class="o">&gt;</span>
+ <span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">numbersreverse</span><span class="o">&lt;/</span><span class="n">name</span><span class="o">&gt;</span>
+ <span class="o">&lt;</span><span class="n">isomorphicmodule</span><span class="o">&gt;</span><span class="n">numbers</span><span class="o">&lt;/</span><span class="n">isomorphicmodule</span><span class="o">&gt;</span>
+ <span class="o">&lt;</span><span class="n">questions</span><span class="o">&gt;</span>
+   <span class="p">(</span><span class="o">..</span><span class="p">)</span>
+ <span class="o">&lt;/</span><span class="n">questions</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">modules</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The two modules <code class="docutils literal notranslate"><span class="pre">numbers</span></code> and <code class="docutils literal notranslate"><span class="pre">numbersreverse</span></code> are isomorphic and contain the same questions except that they appear in reverse
+order in the latter module.</p>
+</div>
 </div>
 
 
@@ -947,14 +1041,14 @@ light tasks is only determined among the users who picked red (blue).</p>
     </div>
 
     
-  <script src="../_static/js/index.6f94ef916480b5a8afd0.js"></script>
+  <script src="../_static/js/index.d8bbf5861d671d414e1a.js"></script>
 
 
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
           &copy; Copyright 2020, Microsoft Research.<br/>
-        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.2.0.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.2.<br/>
     </p>
   </div>
 </footer>

@@ -33,3 +33,35 @@ class CTypeController(object) :
                             if c['aprioripermissable']==True:
                                 crosswalk[row['name']][question['varname']]["aprioripermissable"].append(c['value'])
         return crosswalk
+    def getIsoModules(self):
+        isoModules=dict()
+        d=self.db.ctypes.find({},{'name':1,'isomorphicModule':1})
+        for row in d:
+            if "isomorphicModule" in row:
+                if row["isomorphicModule"]!=None:
+                    m1=row["name"]
+                    m2=row["isomorphicModule"]
+                    if m1 not in isoModules:
+                        isoModules[m1]=set()
+                    if m2 not in isoModules:
+                        isoModules[m2]=set()
+                    isoModules[m1].add(m2)
+                    isoModules[m2].add(m1)
+        #now we augment modules to make sets complete (including indirect maps)
+        augmentedIsoModules=dict()
+        for module in isoModules:
+            augmentedIsoModules[module]=set()
+            alreadyTouched={module}
+            lastTouched={module}
+            while True:
+                newLastTouched=set()
+                for lastM in lastTouched:
+                    for nextM in isoModules[lastM]:
+                        if nextM not in alreadyTouched:
+                            augmentedIsoModules[module].add(nextM)
+                            newLastTouched.add(nextM)
+                            alreadyTouched.add(nextM)
+                if len(newLastTouched)==0:
+                    break
+                lastTouched=newLastTouched
+        return augmentedIsoModules

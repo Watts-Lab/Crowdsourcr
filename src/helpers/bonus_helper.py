@@ -40,8 +40,8 @@ def calculate_raw_bonus_info(possible_bonus_points, bonusDetails, moduleVarnameV
         for module,moduleDetails in taskDetails.items():
             for varname,questionDetails in moduleDetails.items():
                 total_responses=1.0 * len(questionDetails["possibleWorkers"])
-                #cycle over the workers
-                for workerid,response in questionDetails["actualWorkers"].items():
+                #cycle over the primary workers
+                for workerid,response in questionDetails["primaryWorkers"].items():
                     if workerid not in worker_bonus_info:
                         worker_bonus_info.setdefault(workerid, {'earned' : 0.0, 'possible' : 1.0*possible_bonus_points,'exp' : []})
                     #now compare with all the other workers

@@ -3,6 +3,7 @@ import pymongo
 from models import CResponse, CType, SET
 from helpers import CustomEncoder, Lexer, Status
 import jsonpickle
+import copy
 
 class CResponseController(object):
     def __init__(self, db):
@@ -47,7 +48,7 @@ class CResponseController(object):
                                             question_response['varname'],
                                             response_string])
 
-    def getBonusDetails(self,moduleVarnameValuetype={}):
+    def getBonusDetails(self,moduleVarnameValuetype={},isoTasks=dict(),isoModules=dict()):
         #cycle through hits
         crosswalk={} # format taskid -> module -> varname -> {"possibleWorkers":set(),"actualWorkers":dict(),"bonus":{}}
         d=self.db.chits.find({},{'tasks':1,'taskconditions':1,'completed_hits':1,'hitid':1})
@@ -117,7 +118,7 @@ class CResponseController(object):
                                     continue
                                 includedQuestionOrReachable=False
                                 if q.varname not in crosswalk[task][module]:
-                                    crosswalk[task][module][q.varname]={'possibleWorkers':set(),'actualWorkers':{},'bonus':q.get_bonus()}
+                                    crosswalk[task][module][q.varname]={'possibleWorkers':set(),'primaryWorkers':{},'actualWorkers':{},'bonus':q.get_bonus()}
                                 if r!=None and ('response' in r):
                                     #find the correct module
                                     for qr in r['response']:
@@ -126,11 +127,29 @@ class CResponseController(object):
                                                 for vr in qr['responses']:
                                                     if vr['varname']==q.varname:
                                                         crosswalk[task][module][q.varname]['actualWorkers'][workerid]=q.getBonusValue(vr['response'])
+                                                        crosswalk[task][module][q.varname]['primaryWorkers'][workerid]=q.getBonusValue(vr['response'])
                                             includedQuestionOrReachable=q.satisfies_condition(qr['responses'],moduleVarnameValuetype[module])
                                 else:
                                     includedQuestionOrReachable=True
                                 if includedQuestionOrReachable:
                                     crosswalk[task][module][q.varname]['possibleWorkers'].add(workerid)
+        #map isomorphic modules and tasks
+        for task in crosswalk:
+            #cycle through all the isomorphic tasks
+            if task in isoTasks:
+                for isotask in isoTasks[task]:
+                    if isotask in crosswalk:
+                        for m in crosswalk[isotask]:
+                            for mappedM in isoModules[m]:
+                                if mappedM in crosswalk[task]:
+                                    for q in crosswalk[isotask][m]:
+                                        if q in crosswalk[task][mappedM]:
+                                            for workerid in crosswalk[isotask][m][q]["possibleWorkers"]:
+                                                crosswalk[task][mappedM][q]["possibleWorkers"].add(workerid)
+                                            for workerid in crosswalk[isotask][m][q]["actualWorkers"]:
+                                                crosswalk[task][mappedM][q]["actualWorkers"][workerid]=crosswalk[isotask][m][q]["actualWorkers"][workerid]
+                                    break
+        #print(crosswalk)
         return crosswalk
 
     def sanitize_response(self, taskid, response, task_controller, module_controller):

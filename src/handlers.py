@@ -279,8 +279,12 @@ class RecruitingEndHandler(BaseHandler):
                 self.event_controller.add_event(admin_email + " ending run")
             #create crosswalk: module/varname/valuetype
             moduleVarnameValuetype=self.ctype_controller.getModuleVarnameValuetype()
+            #find isoTasks
+            isoTasks=self.ctask_controller.getIsoTasks()
+            #find isoModules
+            isoModules=self.ctype_controller.getIsoModules()
             #create crosswalk: task/module/variable/workers
-            bonusDetails=self.cresponse_controller.getBonusDetails(moduleVarnameValuetype)
+            bonusDetails=self.cresponse_controller.getBonusDetails(moduleVarnameValuetype,isoTasks,isoModules)
             #worker/possible bonus points
             possible_bonus_points = self.chit_controller.getMaxBonusPoints()
             #now calculate raw bonus points

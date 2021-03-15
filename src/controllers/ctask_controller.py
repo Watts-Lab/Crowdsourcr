@@ -16,6 +16,38 @@ class CTaskController(object):
         d = self.db.ctasks.find_one({'taskid' : taskid})
         ctask = CTask.deserialize(d)
         return ctask
+    def getIsoTasks(self):
+        isoTasks=dict()
+        d=self.db.ctasks.find({},{'taskid':1,'isomorphicTask':1})
+        for row in d:
+            if "isomorphicTask" in row:
+                if row["isomorphicTask"]!=None:
+                    t1=row["taskid"]
+                    t2=row["isomorphicTask"]
+                    if t1 not in isoTasks:
+                        isoTasks[t1]=set()
+                    if t2 not in isoTasks:
+                        isoTasks[t2]=set()
+                    isoTasks[t1].add(t2)
+                    isoTasks[t2].add(t1)
+        #now we augment tasks to make sets complete (including indirect maps)
+        augmentedIsoTasks=dict()
+        for task in isoTasks:
+            augmentedIsoTasks[task]=set()
+            alreadyTouched={task}
+            lastTouched={task}
+            while True:
+                newLastTouched=set()
+                for lastT in lastTouched:
+                    for nextT in isoTasks[lastT]:
+                        if nextT not in alreadyTouched:
+                            augmentedIsoTasks[task].add(nextT)
+                            newLastTouched.add(nextT)
+                            alreadyTouched.add(nextT)
+                if len(newLastTouched)==0:
+                    break
+                lastTouched=newLastTouched
+        return augmentedIsoTasks
 
 
 """

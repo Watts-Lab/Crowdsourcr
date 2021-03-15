@@ -1,18 +1,20 @@
 from .question import Question
 
 class CType(object) :
-    def __init__(self, name=None, header=None, contentUpdate=None, questions=[]) :
+    def __init__(self, name=None, header=None, contentUpdate=None,isomorphicModule=None, questions=[]) :
         self.name = name
         self.header = header
         self.contentUpdate=contentUpdate
+        self.isomorphicModule = isomorphicModule
         self.questions = questions
     @classmethod
-    def from_dict(cls, d) :
-        return CType(d['name'], d['header'], d['contentUpdate'],[Question.deserialize(q) for q in d['questions']])
+    def from_dict(cls, d) :       
+        return CType(d['name'], d['header'], d['contentUpdate'],d['isomorphicModule'],[Question.deserialize(q) for q in d['questions']])
     def to_dict(self) :
         return {'name' : self.name,
                 'header' : self.header,
                 'contentUpdate': self.contentUpdate,
+                'isomorphicModule' : self.isomorphicModule,
                 'questions' : [q.serialize() for q in self.questions]}
     def evaluate_conditions(self, response_info={}):
         worker_conditions = {}

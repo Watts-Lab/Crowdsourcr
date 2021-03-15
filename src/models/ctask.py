@@ -1,15 +1,17 @@
 
 class CTask(object):
-    def __init__(self, taskid=None, content=None, modules=[]):
+    def __init__(self, taskid=None, content=None,isomorphicTask=None, modules=[]):
         self.taskid = taskid
         self.content = content
+        self.isomorphicTask=isomorphicTask
         self.modules = modules
     @classmethod
     def deserialize(cls, d):
-        return cls(d['taskid'], d['content'], d['modules'])
+        return cls(d['taskid'], d['content'],d['isomorphicTask'], d['modules'])
     def serialize(self):
         return {'taskid' : self.taskid,
                 'content' : self.content,
+                'isomorphicTask':self.isomorphicTask,
                 'modules' : self.modules}
 
 

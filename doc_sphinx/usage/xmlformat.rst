@@ -772,3 +772,58 @@ There are a few rules on how Crowdsourcr determines the level of agreement:
 For example, in the ``elaborate_conditional_tasks.xml`` survey the worker answers questions on either red light or blue
 light after choosing one of them. Both color choices are ``aprioripermissable`` which implies that agreement on the red (blue)
 light tasks is only determined among the users who picked red (blue).
+
+Isomorphic Tasks and Modules
+-----------------------------
+
+You sometimes want to run tasks which are essentially identical except for question ordering. This poses a problem for
+calculating bonuses because Crowdsourcr has no prior knowledge which tasks should be treated as essentially identical.
+
+For that purpose, you can specify a task to be isomorphic to another task. Such an example is provided 
+in ``questions_bonus_random_order.xml``:
+
+::
+
+ <tasks>
+ <task>
+   <content>numbers.html</content>
+   <taskid>1</taskid>
+   <modules>numbers</modules>
+ </task>
+ <task>
+   <content>numbers.html</content>
+   <taskid>2</taskid>
+   <modules>numbersreverse</modules>
+   <isomorphictask>1</isomorphictask>
+ </task>
+ </tasks>
+
+In this example task 2 is isomorphic to task 1. Crowdsourcr is smart enough to figure out any transitive relationships. For example,
+if task 3 is isomorphic to 2 and 2 is isomorphic to 1 then all three tasks are isomorphic to each other.
+
+
+However, the above XML code is incomplete unless you also define the constitutent modules to be isomorphic to each other. In the 
+above example, each task has a single module:
+
+::
+
+ <modules>
+ <module>
+   <header>Numbers</header>
+   <name>numbers</name>
+   <questions>
+   (..)
+  </questions>
+ </module>
+ <module>
+ <header>Numbers</header>
+  <name>numbersreverse</name>
+  <isomorphicmodule>numbers</isomorphicmodule>
+  <questions>
+    (..)
+  </questions>
+ </module>
+ </modules>
+
+The two modules ``numbers`` and ``numbersreverse`` are isomorphic and contain the same questions except that they appear in reverse 
+order in the latter module.
