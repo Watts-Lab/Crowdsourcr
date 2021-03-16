@@ -39,6 +39,10 @@ def main():
                 db.ctypes.update_one(query, newvalues)  
             print("setting isomorphicModule of module "+row["name"]+" to "+isoName)
         else:
+            query = { "name": row["name"] }
+            newvalues = { "$set": { "isomorphicModule": None } }
+            if do_implement:
+                db.ctypes.update_one(query, newvalues)  
             print("skipping module "+row["name"])
 
     print("TASKS:")  
@@ -52,6 +56,10 @@ def main():
                 db.ctasks.update_one(query, newvalues)  
             print("setting isomorphicTask of task "+row["taskid"]+" to "+isoName)
         else:
+            query = { "taskid": row["taskid"] }
+            newvalues = { "$set": { "isomorphicTask": None } }
+            if do_implement:
+                db.ctasks.update_one(query, newvalues)  
             print("skipping task "+row["taskid"])
 
 if __name__ == "__main__":
