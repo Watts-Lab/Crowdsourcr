@@ -36,14 +36,14 @@ class XMLTask(object) :
                         value=kvpair.find('value').text
                         singleInstance["{"+dimName+":"+key+"}"]=value
                     singleDimension.append(singleInstance)
-                dimensions.append(singleDimension)  
-        return dimensions                          
+                dimensions.append(singleDimension)
+        return dimensions
 
     def get_modules(self):
         def get_help_text(ent) :
             ment = ent.find('helptext')
             return ment.text if ment != None else None
-        encounteredModuleNames=set()    
+        encounteredModuleNames=set()
         for module in self.modules.iter('module'):
             #check if there is an iterator
             mDimensions=self.get_iterator(module)
@@ -75,7 +75,7 @@ class XMLTask(object) :
                           'contentUpdate' : modContentUpdate,
                           'isomorphicModule' : isomorphicModule,
                           'questions' : []}
-                encounteredVarNames=set()                  
+                encounteredVarNames=set()
                 for question in module.find('questions').iter('question'):
                     #check if there is an iterator
                     dimensions=self.get_iterator(question)
@@ -89,7 +89,7 @@ class XMLTask(object) :
                         if varname in encounteredVarNames:
                             raise Exception("Variable "+varname+" in module "+module.find('name').text+" is defined more than once.")
                         encounteredVarNames.add(varname)
-                        lexedCondition=None                        
+                        lexedCondition=None
                         if question.find('condition') != None:
                             conditionStr=question.find('condition').text
                             for instance in D:
@@ -199,7 +199,9 @@ class XMLTask(object) :
                    'exclusions' : get_exclusions(hit),
                    'tasks' : tasks,
                    'validCondition':validCondition,
-                   'taskconditions': taskConditionList}
+                   'taskconditions': taskConditionList,
+                   'numRetries': invalidRetries,
+                   }
     def get_sets(self):
         if self.sets!=None:
             for set in self.sets.iter('set'):
