@@ -1,6 +1,6 @@
 
 class CResponse(object) :
-    def __init__(self, submitted=None, response=None, taskid=None, hitid=None, workerid=None):
+    def __init__(self, submitted=None, response=None, taskid=None, hitid=None, workerid=None, submitStatus=0):
         self.submitted = submitted # date
         # response: [module_responses]
         # module_response: {name:'name', responses:[question_responses]}
@@ -9,16 +9,19 @@ class CResponse(object) :
         self.taskid = taskid
         self.hitid = hitid
         self.workerid = workerid
+        self.submitStatus = submitStatus  # 0 is "in-process", 1 for "valid", 2 for part of invalid submission
     @classmethod
     def deserialize(cls, d) :
         return CResponse(submitted=d['submitted'],
                          response=d['response'],
                          taskid=d['taskid'],
                          hitid=d['hitid'],
-                         workerid=d['workerid'])
+                         workerid=d['workerid'],
+                         submitStatus=d['submitStatus'])
     def serialize(self) :
         return {'submitted' : self.submitted,
                 'response' : self.response,
                 'taskid' : self.taskid,
                 'hitid' : self.hitid,
-                'workerid' : self.workerid}
+                'workerid' : self.workerid,
+                'submitStatus':self.submitStatus}

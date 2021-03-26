@@ -24,6 +24,7 @@ class MTurkConnection:
                  lifetime="43200",
                  pcapproved="95",
                  mincompleted="100",
+                 invalidReplacementIntervalSeconds=600,
                  environment="development",
                  bonus=0.0,
                  **kwargs):
@@ -41,6 +42,7 @@ class MTurkConnection:
         self.lifetime=lifetime
         self.pcapproved=pcapproved
         self.mincompleted=mincompleted
+        self.invalidReplacementIntervalSeconds=invalidReplacementIntervalSeconds
         environments = {
             "production": {
                 "endpoint": "https://mturk-requester.us-east-1.amazonaws.com",
@@ -99,7 +101,8 @@ class MTurkConnection:
                  'lifetime': self.lifetime,
                  'locales': self.locales,
                  'pcapproved':self.pcapproved,
-                 'mincompleted':self.mincompleted}
+                 'mincompleted':self.mincompleted,
+                 'invalidReplacementIntervalSeconds':self.invalidReplacementIntervalSeconds}
     @classmethod
     def deserialize(cls, d):  
         return MTurkConnection(**d)
@@ -275,6 +278,9 @@ class MTurkConnection:
         if len(assignment_ids) > 0:
             print("Successfully made %d of %d payments" % (npayments, len(assignment_ids)))
             print("New account balance: %s" % str(self.client.get_account_balance()['AvailableBalance']))
+
+    def add_assignment(self,extra_assignments=0):
+        self.client.create_additional_assignments_for_hit(HITId=self.hit_id,NumberOfAdditionalAssignments=extra_assignments)
 
     def delete_hit(self):
         try:

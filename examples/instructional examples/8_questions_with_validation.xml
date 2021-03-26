@@ -1,0 +1,158 @@
+<xml>
+  <modules>
+    <module>
+      <header>Numbers</header>
+      <name>numbers</name>
+      <questions>
+        <question>
+          <varname>number1</varname>
+          <bonus>threshold:50</bonus>
+          <bonuspoints>2</bonuspoints>
+          <questiontext>Which of the following is the number twenty-two?</questiontext>
+          <helptext>You will get a bonus based on how many other people choose the same thing.</helptext>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>3</text>
+                <value>3</value>
+              </category>
+              <category>
+                <text>17</text>
+                <value>17</value>
+              </category>
+              <category>
+                <text>22</text>
+                <value>22</value>
+              </category>
+              <category>
+                <text>111</text>
+                <value>111</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+      </questions>
+    </module>
+    <module>
+      <header>Extra task</header>
+      <name>extra</name>
+      <questions>
+        <question>
+          <varname>number2</varname>
+          <bonus>threshold:50</bonus>
+          <bonuspoints>2</bonuspoints>
+          <questiontext>Since you did so well we will ask you another difficult question. Which of the following is the number twenty-three?</questiontext>
+          <helptext>You will get a bonus based on how many other people choose the same thing.</helptext>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>1</text>
+                <value>1</value>
+              </category>
+              <category>
+                <text>11</text>
+                <value>11</value>
+              </category>
+              <category>
+                <text>55</text>
+                <value>55</value>
+              </category>
+              <category>
+                <text>23</text>
+                <value>23</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+      </questions>
+    </module>
+  </modules>
+
+  <tasks>
+    <task>
+      <content>numbers.html</content>
+      <taskid>1</taskid>
+      <modules>numbers</modules>
+    </task>
+    <task>
+      <content>extra_task.html</content>
+      <taskid>2</taskid>
+      <modules>numbers</modules>
+    </task>
+  </tasks>
+  
+  <hits>
+    <hit>
+      <hitid>1</hitid>
+      <tasks>1 2</tasks>
+      <taskconditions>
+        <taskcondition>
+          <taskid>2</taskid>
+          <condition>
+            <![CDATA[
+				1*numbers*number1==22
+				]]>
+          </condition>
+        </taskcondition>
+      </taskconditions>
+      <validsubmission>
+        <condition>
+        <![CDATA[
+				  1*numbers*number1==22
+				]]>
+        </condition>
+        <invalidRetries>
+          3
+        </invalidRetries>
+      </validsubmission>
+    </hit>
+    <hit>
+      <hitid>2</hitid>
+      <tasks>1 2</tasks>
+      <taskconditions>
+        <taskcondition>
+          <taskid>2</taskid>
+          <condition>
+            <![CDATA[
+				1*numbers*number1==22
+				]]>
+          </condition>
+        </taskcondition>
+      </taskconditions>
+      <validsubmission>
+        <condition>
+        <![CDATA[
+				  1*numbers*number1==22
+				]]>
+        </condition>
+        <invalidRetries>
+          3
+        </invalidRetries>
+      </validsubmission>
+    </hit>
+  </hits>
+  
+  <documents>
+    <document>
+      <name>numbers.html</name>
+      <content>
+        <![CDATA[
+      <p>This HIT onsists of two tasks. The second task is only reached if you answer the task correctly.
+        Notice in the bottom right corner it says "You are on task 1 of 2". But if you answer the first task incorrectly
+        it will end the HIT.</p>
+        <p>The XML defines a HIT as "valid" iff the first task is correctly defined. Otherwise it will request another HIT from mTurk. You can see this on the admin screen.</p>
+      ]]></content>
+    </document>
+    <document>
+      <name>conditional_task.html</name>
+      <content>
+        <![CDATA[
+      <p>The task you are on is an extra task if you pass validation. You have reached this task because you answered the first question 
+      in the first task correctly. Congratulations!</p>
+      ]]>
+      </content>
+    </document>
+  </documents>
+</xml>

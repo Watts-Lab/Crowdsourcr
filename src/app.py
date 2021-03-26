@@ -103,6 +103,8 @@ class Application(tornado.web.Application):
 
         if app_config.make_payments :
             self.ensure_automatic_make_payments()
+
+        self.add_extra_assignments()
     
     @property
     def logging(self) :
@@ -126,6 +128,22 @@ class Application(tornado.web.Application):
             pc.start()
         # run this from the main ioloop just in case we have multiple threads
         tornado.ioloop.IOLoop.instance().add_callback(_ensure)
+
+    def add_extra_assignments(self) :
+        def _addAssignments() :
+            def callback() :
+                #now loop through pending assignments
+                extra_assignments=self.hit_controller.convert_pending_to_extra()
+                self.logging.info(u"adding "+extra_assignments+" extra assignments")
+                if extra_assignments>0:
+                    self.mturkconnection_controller.add_assignment(extra_assignments=extra_assignments,
+                                                      environment=self.settings['environment'])
+            callback_time = 30 # 30 seconds
+            pc = tornado.ioloop.PeriodicCallback(callback, callback_time)
+            pc.start()
+        # run this from the main ioloop just in case we have multiple threads
+        tornado.ioloop.IOLoop.instance().add_callback(_addAssignments)
+
 
 def start() :
     application = Application(drop=options.drop)

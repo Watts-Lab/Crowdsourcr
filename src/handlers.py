@@ -388,6 +388,12 @@ class RecruitingInfoHandler(BaseHandler):
                     errorList.append("Workers min. completed HITs has to be a non-negative integer.")
             except ValueError:
                 errorList.append("Workers min. completed HITs has to be a non-negative integer.")
+            try:
+                invalidReplacementIntervalSeconds=int(recruiting_info['invalidReplacementIntervalSeconds'])
+                if invalidReplacementIntervalSeconds<0:
+                    errorList.append("Interval in seconds for replacing invalid assignments has to be positive.")
+            except ValueError:
+                errorList.append("Interval in seconds for replacing invalid assignments has to a non-negative integer.")
             if len(errorList)==0:
                 mtconn = self.mturkconnection_controller.create(recruiting_info)
         if len(errorList)==0:
@@ -492,7 +498,48 @@ class CHITViewHandler(BaseHandler):
                 hitid = existing_status['hitid']
                 if taskindex >= len(chit.tasks):
                     self.clear_cookie('workerid')
-                    completed_chit_info = self.chit_controller.add_completed_hit(chit=chit, worker_id=workerid)
+                    #we reached the of the survey: check validity
+                    validSurvey=True
+                    if chit.validCondition!=None:
+                        condition=jsonpickle.decode(chit.validCondition)
+                        allVariables=dict()
+                        has_error=False
+                        for v in condition.varlist:
+                            if v=="$workerid":
+                                allVariables["$workerid"]=workerid
+                            else:
+                                frags=v.split('*')
+                                if len(frags)!=3:
+                                    has_error=True
+                                else:
+                                    docs = self.db.cresponses.find({"$and":[{'workerid' : workerid},{'hitid' : chit.hitid},{'taskid':frags[0]}]}).sort('submitted')
+                                    lastDoc=None
+                                    for d in docs:
+                                        lastDoc=d
+                                    if lastDoc!=None:
+                                        response=lastDoc["response"]
+                                        for module in response:
+                                            if module["name"]==frags[1]:
+                                                for q in module["responses"]:
+                                                    if q["varname"]==frags[2] and ("response" in q):
+                                                        allVariables[v]=q["response"]
+                        allSets=dict()
+                        for s in condition.setlist:
+                            allSets[s]=self.set_controller.get_set_members(s)
+                        if not has_error:
+                            status=Status()
+                            if not condition.check_conditions(allVariables, allSets, status):
+                               validSurvey=False 
+                    if validSurvey:
+                        #survey is valid - mark responses with 1 (valid submission)
+                        #print("VALID SURVEY")
+                        self.db.cresponses.update({'hitid' : chit.hitid, 'workerid':workerid},{'$set' : {'submitStatus' : 1}},multi=True)
+                        completed_chit_info = self.chit_controller.add_completed_hit(chit=chit, worker_id=workerid)
+                    else: 
+                        #survey is invalid - mark responses with 2 (invalid submission)
+                        #print("INVALID SURVEY")
+                        self.db.cresponses.update({'hitid' : chit.hitid, 'workerid':workerid},{'$set' : {'submitStatus' : 2}},multi=True)
+                        completed_chit_info = self.chit_controller.add_completed_hit_validation_notpassed(chit=chit, worker_id=workerid)
                     self.currentstatus_controller.remove(workerid)
                     self.return_json({'completed_hit':True,
                                       'verify_code' : completed_chit_info['turk_verify_code']})
@@ -507,21 +554,28 @@ class CHITViewHandler(BaseHandler):
                                       "task_num" : taskindex,
                                       "num_tasks" : len(chit.tasks)})
             else:
-                completed_hits = self.cresponse_controller.get_hits_for_worker(workerid)
-                outstanding_hits = self.currentstatus_controller.outstanding_hits()
-                sh = self.db.workerpings.find().sort([('lastping',1)])
-                stale_hits = [s for s in sh if self.chit_controller.get_chit_by_id(s['hitid'])]
-                nexthit = self.chit_controller.get_next_chit_id(exclusions=completed_hits, workerid=workerid, outstanding_hits=outstanding_hits, stale_hits=stale_hits)
-                if nexthit == None :
+                #check if this worker already had an invalid hit
+                badWorkers=self.cresponse_controller.get_workers_with_completed_hits_validation_notpassed()
+                if workerid in badWorkers:
                     self.logging.info('no next hit')
                     #self.clear_cookie('workerid')
-                    self.return_json({'no_hits' : True,
+                    self.return_json({'no_hits' : True})
+                else:
+                    completed_hits = self.cresponse_controller.get_hits_for_worker(workerid)
+                    outstanding_hits = self.currentstatus_controller.outstanding_hits()
+                    sh = self.db.workerpings.find().sort([('lastping',1)])
+                    stale_hits = [s for s in sh if self.chit_controller.get_chit_by_id(s['hitid'])]
+                    nexthit = self.chit_controller.get_next_chit_id(exclusions=completed_hits, workerid=workerid, outstanding_hits=outstanding_hits, stale_hits=stale_hits)
+                    if nexthit == None :
+                        self.logging.info('no next hit')
+                        #self.clear_cookie('workerid')
+                        self.return_json({'no_hits' : True,
                                       'unfinished_hits' : self.chit_controller.has_available_hits()})
-                else :
-                    self.currentstatus_controller.create_or_update(workerid=workerid,
+                    else:
+                        self.currentstatus_controller.create_or_update(workerid=workerid,
                                                                    hitid=nexthit,
                                                                    taskindex=0)
-                    self.return_json({'reload_for_first_task':True})
+                        self.return_json({'reload_for_first_task':True})
 
 class WorkerPingHandler(BaseHandler) :
     def post(self) :
@@ -600,6 +654,7 @@ class CResponseHandler(BaseHandler):
                                               'response' : response,
                                               'workerid' : worker_id,
                                               'hitid' : chit.hitid,
+                                              'submitStatus':0,
                                               'taskid' : taskid})
             #check if there is a taskcondition set
             skip=1
@@ -640,10 +695,11 @@ class CResponseHandler(BaseHandler):
                         if not condition.check_conditions(allVariables, allSets, status):
                             skip+=1
                 if skip==oldSkip:
-                   break;
+                   break
             self.currentstatus_controller.create_or_update(workerid=worker_id,
                                                            hitid=hitid,
                                                            taskindex=taskindex+skip)
+            #check if reached the end of the HIT: in that case run the validation condition
             self.finish()
 
 class CSVDownloadHandler(BaseHandler):
@@ -663,11 +719,19 @@ class CSVDownloadHandler(BaseHandler):
         question_responses_csvwriter = csv.writer(question_responses_output, delimiter='\t')
         self.cresponse_controller.write_question_responses_to_csv(question_responses_csvwriter, completed_workers=completed_workers)
 
+        #add invalid submissions
+        completed_workers_invalid = self.chit_controller.get_workers_with_completed_hits_validation_notpassed()
+        question_responses_invalid_output = io.StringIO()
+        question_responses_invalid_csvwriter = csv.writer(question_responses_invalid_output, delimiter='\t')
+        self.cresponse_controller.write_question_responses_to_csv(question_responses_invalid_csvwriter, completed_workers=completed_workers_invalid)
+
+        
         zip_name = "data.zip"
         f = BytesIO()
         with ZipFile(f, "w") as zf:
             zf.writestr('task_submission_times.tsv', task_submission_times_output.getvalue())
             zf.writestr('question_responses.tsv', question_responses_output.getvalue())
+            zf.writestr('question_responses_invalid_surveys.tsv', question_responses_invalid_output.getvalue())
 
         self.set_header('Content-Type', 'application/zip')
         self.set_header("Content-Disposition", "attachment; filename={}".format(zip_name))

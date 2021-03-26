@@ -75,7 +75,11 @@ $('#addAdmin').click(function(evt) {
                 $('#editHitMinCompleted').val($('#staticHitMinCompleted').val());
                 if ($('#editHitMinCompleted').val()==""){
                     $('#editHitMinCompleted').val(100);
-                }                
+                }           
+                $('#editInvalidReplacementIntervalSeconds').val($('#staticInvalidReplacementIntervalSeconds').val());
+                if ($('#editInvalidReplacementIntervalSeconds').val()==""){
+                    $('#editInvalidReplacementIntervalSeconds').val(100);
+                }                                           
 				$('#editHitWarning').hide();
                 $('#editHitServerWarning').hide();
 				$('#beginEditHitModal').modal('show');		
@@ -92,7 +96,8 @@ $('#addAdmin').click(function(evt) {
                             lifetime:  $('#editHitLifetime').val(),
                             locales : $('#editHitLocales').val(),	
                             pcapproved : $('#editHitPCapproved').val(),	
-                            mincompleted : $('#editHitMinCompleted').val()	                        
+                            mincompleted : $('#editHitMinCompleted').val(),
+                            invalidReplacementIntervalSeconds : $('#editInvalidReplacementIntervalSeconds').val(),
                         };	
 			console.log(mturk_info);
 			for (var key in mturk_info) {
@@ -203,7 +208,10 @@ $('#addAdmin').click(function(evt) {
                       $('#admin-login-info').text('Logged in as ' + data.full_name + ' (' + data.email + ').');
                       $('#admin-server-info').text('Server is running in '+ data.environment +' mode.');
                       $('#admin-superadmin').toggle(data.superadmin);
-                      $('#admin-task-info').html(data.hitinfo.num_hits + ' HITs ('+ data.hitinfo.num_tasks +' tasks) loaded. ' + data.hitinfo.num_completed_hits + ' HITs ('+ data.hitinfo.num_completed_tasks +' tasks) complete. ');
+                      var taskInfo=data.hitinfo.num_hits + ' HITs ('+ data.hitinfo.num_tasks +' tasks) loaded. ' + data.hitinfo.num_completed_hits + ' HITs ('+ data.hitinfo.num_completed_tasks +' tasks) complete. ';
+                      taskInfo=taskInfo+data.hitinfo.num_completed_hits_validation_notpassed +' invalid HITs ';
+                      taskInfo=taskInfo+"("+data.num_extra_assignments+" extra assignments created, "+data.num_pending_extra_assignments+" pending assignments).";
+                      $('#admin-task-info').html(taskInfo);                      
                       if (!data.turkinfo || !data.turkbalance || data.hitinfo.num_hits==0) {
 						  $('#openEditModalButton').attr("disabled", false);
 						  if (!data.turkinfo){
@@ -231,7 +239,8 @@ $('#addAdmin').click(function(evt) {
 								$('#staticHitLifetime').val(data.turkinfo.lifetime);							  
 								$('#staticHitLocales').val(data.turkinfo.locales);							  
 								$('#staticHitPCapproved').val(data.turkinfo.pcapproved);							  
-                                $('#staticHitMinCompleted').val(data.turkinfo.mincompleted);	            
+                                $('#staticHitMinCompleted').val(data.turkinfo.mincompleted);
+                                $('#staticInvalidReplacementIntervalSeconds').val(data.turkinfo.invalidReplacementIntervalSeconds);                                                            
                           }
                           if (data.turkinfo.running) {
                               var amazonLink = data.turkinfo.admin_host + "/mturk/manageHIT?HITId=" + data.turkinfo.hitid;

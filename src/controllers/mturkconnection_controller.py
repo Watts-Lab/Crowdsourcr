@@ -69,4 +69,7 @@ class MTurkConnectionController(object):
                 submitted_assignments = mt_conn.get_payments_to_make()
                 mt_conn.make_payments(assignment_ids=[a[0] for a in submitted_assignments if CHITController.secret_code_matches(db=self.db,worker_id=a[1], secret_code=a[2].strip())])
 
+    def add_assignment(self, extra_assignments=0, email=None, environment="development"):
+        mt_conn = self.get_by_email(email=email, environment=environment)
+        mt_conn.add_assignment(extra_assignments=extra_assignments)
             

@@ -15,12 +15,16 @@ class CResponseController(object):
         self.db.cresponses.insert(cresponse.serialize())
         return cresponse
     def append_completed_task_info(self, **d) :
-        d['num_completed_tasks'] = self.db.cresponses.count()
+        d['num_completed_tasks'] = self.db.cresponses.count_documents({'submitStatus':1})
+        d['num_inprocess_tasks'] = self.db.cresponses.count_documents({'submitStatus':0})
         return d
     def get_reponse_info_by_worker(self, workerid):
         d = self.db.cresponses.find({'workerid' : workerid})
         return {'count' : len(d) }
     def get_hits_for_worker(self, workerid):
+        d = self.db.cresponses.find({'workerid' : workerid}, {'hitid' : 1})
+        return [r['hitid'] for r in d]
+    def get_hits_for_worker_with_invalids(self, workerid):
         d = self.db.cresponses.find({'workerid' : workerid}, {'hitid' : 1})
         return [r['hitid'] for r in d]
     def write_response_to_csv(self, csvwriter, completed_workers=[]) :

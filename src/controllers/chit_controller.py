@@ -5,6 +5,9 @@ import datetime
 
 class CHITController(object):
     sum_map = bson.code.Code("function() { emit(1, this.num_completed_hits); }")
+    sum_map_not_validated = bson.code.Code("function() { emit(1, this.num_completed_hits_validation_notpassed); }")
+    sum_map_extra_assignments = bson.code.Code("function() { emit(1, this.num_extra_assignments); }")
+    sum_map_pending_extra_assignments = bson.code.Code("function() { emit(1, this.num_pending_extra_assignments); }")
     sum_reduce = bson.code.Code("function(key, vals) { return Array.sum(vals); }")
     task_sum_map = bson.code.Code("function() { emit(1, this.tasks.length); }")
 
@@ -57,10 +60,19 @@ class CHITController(object):
     def get_agg_hit_info(self):
         completed_hits_mr = self.db.chits.map_reduce(self.sum_map, self.sum_reduce, "chit_mapreducesum_results")
         num_completed_hits = completed_hits_mr.find_one()
+        completed_hits_validation_notpassed_mr = self.db.chits.map_reduce(self.sum_map_not_validated, self.sum_reduce, "chit_mapreducesum_not_validated_results")
+        num_completed_hits_validation_notpassed = completed_hits_validation_notpassed_mr.find_one()
+        extra_assignments_mr = self.db.chits.map_reduce(self.sum_map_extra_assignments, self.sum_reduce, "chit_mapreducesum_extra_assignments_results")
+        num_extra_assignments = extra_assignments_mr.find_one()
+        pending_extra_assignments_mr = self.db.chits.map_reduce(self.sum_map_pending_extra_assignments, self.sum_reduce, "chit_mapreducesum_pending_extra_assignments_results")
+        num_pending_extra_assignments = pending_extra_assignments_mr.find_one()
         all_tasks_mr = self.db.chits.map_reduce(self.task_sum_map, self.sum_reduce, "chit_task_mapreducesum_results")
         num_tasks = all_tasks_mr.find_one()
         num_total_hits = self.db.chits.count()
         return {'num_completed_hits' : num_completed_hits['value'] if num_completed_hits else 0,
+                'num_completed_hits_validation_notpassed' : num_completed_hits_validation_notpassed['value'] if num_completed_hits_validation_notpassed else 0,
+                'num_extra_assignments' : num_extra_assignments['value'] if num_extra_assignments else 0,
+                'num_pending_extra_assignments' : num_pending_extra_assignments['value'] if num_pending_extra_assignments else 0,
                 'num_hits' : num_total_hits,
                 'num_tasks' : num_tasks['value'] if num_tasks else 0}
     def add_completed_hit(self,chit=None, worker_id=None):
@@ -70,6 +82,47 @@ class CHITController(object):
                              {'$push' : {'completed_hits' : hit_info},
                               '$inc' : {'num_completed_hits' : 1}})
         return hit_info
+    def add_completed_hit_validation_notpassed(self,chit=None, worker_id=None):
+        d = self.db.chits.find_one({'hitid' : chit.hitid}) 
+        hit_info = {'worker_id' : worker_id, 'turk_verify_code' : uuid.uuid4().hex[:16]}
+        if d["num_completed_hits_validation_notpassed"]<d["invalidRetries"]:
+            self.db.chits.update({'hitid' : chit.hitid},
+                             {'$push' : {'completed_hits_validation_notpassed' : hit_info},
+                             '$inc' : {'num_completed_hits_validation_notpassed' : 1},
+                             '$inc' : {'num_pending_extra_assignments' : 1},
+                             '$push' : {'pending_extra_assignments' : datetime.datetime.utcnow()}
+                             })                             
+        else:
+            self.db.chits.update({'hitid' : chit.hitid},
+                             {'$push' : {'completed_hits_validation_notpassed' : hit_info},
+                             '$inc' : {'num_completed_hits_validation_notpassed' : 1}
+                             })                             
+        return hit_info
+    def convert_pending_to_extra(self):
+        converted=0
+        d=self.db.mturkconnections.find_one()
+        invalidReplacementIntervalSeconds=d['invalidReplacementIntervalSeconds']
+        cutoff = datetime.datetime.utcnow() - datetime.timedelta(seconds=invalidReplacementIntervalSeconds)
+        d = self.db.chits.find() 
+        for r in d:
+            remainingPending=[]
+            changes=0
+            for entry in r['pending_extra_assignments']:
+                if entry>cutoff:
+                    changes=changes+1
+                    converted=converted+1
+                else:
+                    remainingPending.append(entry)
+            if changes>0:
+                self.db.chits.update({'hitid':r['hitid']},
+                {
+                    '$set' : {
+                        'num_pending_extra_assignments':(r['num_pending_extra_assignments']-changes),
+                        'num_extra_assignments':(r['num_extra_assignments']+changes),
+                        'pending_extra_assignments':remainingPending
+                    }
+                })
+        return converted
     def get_completed_hits(self) :
         d = self.db.chits.find({'num_completed_hits' : {'$gte' : 1}}, {'hitid' : 1})
         return [r['hitid'] for r in d]
@@ -78,6 +131,13 @@ class CHITController(object):
         worker_ids = set()
         for r in d:
             for hit in r['completed_hits']:
+                worker_ids.add(hit['worker_id'])
+        return list(worker_ids)
+    def get_workers_with_completed_hits_validation_notpassed(self) :
+        d = self.db.chits.find({'num_completed_hits_validation_notpassed' : {'$gte' : 1}}, {'completed_hits_validation_notpassed' : 1})
+        worker_ids = set()
+        for r in d:
+            for hit in r['completed_hits_validation_notpassed']:
                 worker_ids.add(hit['worker_id'])
         return list(worker_ids)
     #max points

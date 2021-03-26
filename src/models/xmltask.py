@@ -178,9 +178,27 @@ class XMLTask(object) :
                             raise Exception(status.error)
                         taskConditionList[i]= jsonpickle.encode(lex)
                         #print(taskConditionList[i])
+            validCondition=None
+            invalidRetries=0
+            validsubmission=hit.find('validsubmission')
+            if validsubmission!=None:
+                condition=validsubmission.find('condition')
+                if condition!=None:
+                    lex = Lexer()
+                    status = Status()
+                    if not(lex.can_import(condition.text, status)):
+                        raise Exception(status.error)
+                    validCondition= jsonpickle.encode(lex)
+                retries=validsubmission.find('invalidRetries')
+                if retries!=None:
+                    try:
+                        invalidRetries=int(retries.text)
+                    except:
+                        raise Exception("invalidRetries "+retries.text+" is not an integer")
             yield {'hitid' : hit.find('hitid').text,
                    'exclusions' : get_exclusions(hit),
                    'tasks' : tasks,
+                   'validCondition':validCondition,
                    'taskconditions': taskConditionList}
     def get_sets(self):
         if self.sets!=None:
