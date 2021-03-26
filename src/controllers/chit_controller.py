@@ -86,7 +86,7 @@ class CHITController(object):
     def add_completed_hit_validation_notpassed(self,chit=None, worker_id=None):
         d = self.db.chits.find_one({'hitid' : chit.hitid})
         hit_info = {'worker_id' : worker_id, 'turk_verify_code' : uuid.uuid4().hex[:16]}
-        if d["num_completed_hits_validation_notpassed"] < d["numRetries"]:
+        if d["num_completed_hits_validation_notpassed"] < d["invalidRetries"]:
             self.db.chits.update(
                 {'hitid' : chit.hitid},
                 {
