@@ -106,14 +106,14 @@ class CHITController(object):
         if d is None:
             return converted
 
-        invalidReplacementIntervalSeconds=d['invalidReplacementIntervalSeconds']
+        invalidReplacementIntervalSeconds=int(d['invalidReplacementIntervalSeconds'])
         cutoff = datetime.datetime.utcnow() - datetime.timedelta(seconds=invalidReplacementIntervalSeconds)
         d = self.db.chits.find()
         for r in d:
             remainingPending=[]
             changes=0
             for entry in r['pending_extra_assignments']:
-                if entry>cutoff:
+                if entry<cutoff:
                     changes=changes+1
                     converted=converted+1
                 else:

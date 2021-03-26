@@ -6,6 +6,7 @@ class CHIT(object):
         exclusions=[],
         tasks=[],
         validCondition=None,
+        invalidRetries=0,
         taskconditions=[],
         completed_hits=[],
         completed_hits_validation_notpassed=[],
@@ -19,6 +20,7 @@ class CHIT(object):
         self.hitid = hitid
         self.tasks = tasks
         self.validCondition=validCondition
+        self.invalidRetries=invalidRetries
         self.taskconditions=taskconditions
         self.completed_hits = completed_hits
         self.completed_hits_validation_notpassed=completed_hits_validation_notpassed
@@ -35,6 +37,7 @@ class CHIT(object):
         return {'hitid' : self.hitid,
                 'tasks' : self.tasks,
                 'validCondition':self.validCondition,
+                'invalidRetries':self.invalidRetries,
 				'taskconditions': self.taskconditions,
                 'exclusions' : self.exclusions,
                 'completed_hits' : self.completed_hits,

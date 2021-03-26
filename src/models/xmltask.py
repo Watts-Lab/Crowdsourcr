@@ -199,6 +199,7 @@ class XMLTask(object) :
                    'exclusions' : get_exclusions(hit),
                    'tasks' : tasks,
                    'validCondition':validCondition,
+                   'invalidRetries':invalidRetries,
                    'taskconditions': taskConditionList}
     def get_sets(self):
         if self.sets!=None:
