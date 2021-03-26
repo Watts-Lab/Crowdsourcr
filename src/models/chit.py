@@ -1,6 +1,21 @@
 
 class CHIT(object):
-    def __init__(self, hitid=None, exclusions=[], tasks=[], validCondition=None, taskconditions=[], completed_hits=[], completed_hits_validation_notpassed=[], num_completed_hits=0, num_completed_hits_validation_notpassed=0,num_extra_assignments=0,num_pending_extra_assignments=0, pending_extra_assignments=[], **kwargs):
+    def __init__(
+        self,
+        hitid=None,
+        exclusions=[],
+        tasks=[],
+        validCondition=None,
+        taskconditions=[],
+        completed_hits=[],
+        completed_hits_validation_notpassed=[],
+        num_completed_hits=0,
+        num_completed_hits_validation_notpassed=0,
+        num_extra_assignments=0,
+        num_pending_extra_assignments=0,
+        pending_extra_assignments=[],
+        **kwargs
+    ):
         self.hitid = hitid
         self.tasks = tasks
         self.validCondition=validCondition
@@ -10,8 +25,8 @@ class CHIT(object):
         self.exclusions = exclusions
         self.num_completed_hits = num_completed_hits
         self.num_completed_hits_validation_notpassed = num_completed_hits_validation_notpassed
-        self.num_extra_assignments=num_extra_assignments
-        self.num_pending_extra_assignments=num_pending_extra_assignments
+        self.num_extra_assignments = num_extra_assignments
+        self.num_pending_extra_assignments = num_pending_extra_assignments
         self.pending_extra_assignments = pending_extra_assignments
     @classmethod
     def deserialize(cls, d):

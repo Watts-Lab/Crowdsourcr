@@ -10,17 +10,17 @@
               evt.preventDefault();
               uploadXML();
           });
-          
-          
-          $('#admin-begin-run').click(function(evt) {			  
+
+
+          $('#admin-begin-run').click(function(evt) {
               evt.preventDefault();
               beginRun();
           });
-          
+
           $('#admin-end-run').click(function(evt) {
 				evt.preventDefault();
 				$('#admin-end-run').hide();
-				$('#admin-end-run-submitting').show();		  
+				$('#admin-end-run-submitting').show();
 				$.post('/admin/recruit/end/', {}).always(function () {
 					$.get('/admin/info/' + nocache(), function(data) {
 					try {
@@ -28,12 +28,12 @@
 						$('#admin-end-run').show();
 						$('#admin-end-run-submitting').hide();
 						$('#admin-end-run-original').hide();
-						$('#admin-begin-run-original').show();				  
-						$('#endRunModal').modal('hide');				  						
+						$('#admin-begin-run-original').show();
+						$('#endRunModal').modal('hide');
 					}finally {}});
 				});
-          });			  						
-          
+          });
+
           $('#download-data-btn').click(function(evt) {
               evt.preventDefault();
               window.location.href = '/admin/download/';
@@ -63,29 +63,29 @@ $('#addAdmin').click(function(evt) {
 				$('#editHitLifetime').val($('#staticHitLifetime').val());
                 if ($('#editHitLifetime').val()==""){
                     $('#editHitLifetime').val(12*3600);
-                }                
-                $('#editHitLocales').val($('#staticHitLocales').val());                
+                }
+                $('#editHitLocales').val($('#staticHitLocales').val());
                 if ($('#editHitLocales').val()==""){
                     $('#editHitLocales').val("US");
-                }                
+                }
 				$('#editHitPCapproved').val($('#staticHitPCapproved').val());
                 if ($('#editHitPCapproved').val()==""){
                     $('#editHitPCapproved').val(95);
-                }                
+                }
                 $('#editHitMinCompleted').val($('#staticHitMinCompleted').val());
                 if ($('#editHitMinCompleted').val()==""){
                     $('#editHitMinCompleted').val(100);
-                }           
+                }
                 $('#editInvalidReplacementIntervalSeconds').val($('#staticInvalidReplacementIntervalSeconds').val());
                 if ($('#editInvalidReplacementIntervalSeconds').val()==""){
                     $('#editInvalidReplacementIntervalSeconds').val(100);
-                }                                           
+                }
 				$('#editHitWarning').hide();
                 $('#editHitServerWarning').hide();
-				$('#beginEditHitModal').modal('show');		
-		  });	
-				
-			
+				$('#beginEditHitModal').modal('show');
+		  });
+
+
           $('#editHITparameters').click(function(evt) {
               evt.preventDefault();
 			  var mturk_info = {hitpayment : parseFloat($('#editHitPayment').val()),
@@ -94,11 +94,11 @@ $('#addAdmin').click(function(evt) {
                             keywords : $('#editHitKeywords').val(),
                             bonus : parseFloat($('#editBonusPayment').val()),
                             lifetime:  $('#editHitLifetime').val(),
-                            locales : $('#editHitLocales').val(),	
-                            pcapproved : $('#editHitPCapproved').val(),	
+                            locales : $('#editHitLocales').val(),
+                            pcapproved : $('#editHitPCapproved').val(),
                             mincompleted : $('#editHitMinCompleted').val(),
                             invalidReplacementIntervalSeconds : $('#editInvalidReplacementIntervalSeconds').val(),
-                        };	
+                        };
 			console.log(mturk_info);
 			for (var key in mturk_info) {
               if (mturk_info.hasOwnProperty(key) && !mturk_info[key]) {
@@ -126,26 +126,26 @@ $('#addAdmin').click(function(evt) {
                             updateStatus(data,true);
                             $('#editHITparameters').show();
                             $('#editHITparameters-submitting').hide();
-                            $('#beginEditHitModal').modal('hide');		
-                        }finally {}});				    
-                    }                 
+                            $('#beginEditHitModal').modal('hide');
+                        }finally {}});
+                    }
 			});
           });
 
 
 
 	  // Add the following code if you want the name of the file appear on select
-	  $(".custom-file-input").on("change", function() {	
+	  $(".custom-file-input").on("change", function() {
 		var fileName = $(this).val().split("\\").pop();
 		$(this).siblings(".custom-file-label").addClass("selected").html(fileName);
       });
 
-          
+
           getStatus(true);
           getHITs();
 		  reloadAdminList();
       }
-      
+
       function getHITs() {
           $.get('/admin/hits' + nocache(), function (data) {
               $('#admin-hits').hide();
@@ -173,10 +173,10 @@ $('#addAdmin').click(function(evt) {
               }
           });
       }
-      
+
       function beginRun(callback) {
           $('#admin-begin-run').hide();
-          $('#admin-begin-run-submitting').show();		  
+          $('#admin-begin-run-submitting').show();
           $.post('/admin/recruit/begin', {}, callback).always(function () {
 					$.get('/admin/info/' + nocache(), function(data) {
 					try {
@@ -184,12 +184,12 @@ $('#addAdmin').click(function(evt) {
 						$('#admin-begin-run').show();
 						$('#admin-begin-run-submitting').hide();
 						$('#admin-begin-run-original').hide();
-						$('#admin-end-run-original').show();				  
-						$('#beginRunModal').modal('hide');				  
+						$('#admin-end-run-original').show();
+						$('#beginRunModal').modal('hide');
 					}finally {}});
               });
       }
-      
+
       function getStatus(updateTurkInfo) {
           $.get('/admin/info/' + nocache(), function(data) {
               try {
@@ -202,7 +202,7 @@ $('#addAdmin').click(function(evt) {
               setTimeout(getStatus, 5000);
           });
       }
-	  
+
 	  function updateStatus(data,updateTurkInfo){
                   if (data.authed) {
                       $('#admin-login-info').text('Logged in as ' + data.full_name + ' (' + data.email + ').');
@@ -210,8 +210,8 @@ $('#addAdmin').click(function(evt) {
                       $('#admin-superadmin').toggle(data.superadmin);
                       var taskInfo=data.hitinfo.num_hits + ' HITs ('+ data.hitinfo.num_tasks +' tasks) loaded. ' + data.hitinfo.num_completed_hits + ' HITs ('+ data.hitinfo.num_completed_tasks +' tasks) complete. ';
                       taskInfo=taskInfo+data.hitinfo.num_completed_hits_validation_notpassed +' invalid HITs ';
-                      taskInfo=taskInfo+"("+data.num_extra_assignments+" extra assignments created, "+data.num_pending_extra_assignments+" pending assignments).";
-                      $('#admin-task-info').html(taskInfo);                      
+                      taskInfo=taskInfo+"("+data.hitinfo.num_extra_assignments+" extra assignments created, "+data.hitinfo.num_pending_extra_assignments+" pending assignments).";
+                      $('#admin-task-info').html(taskInfo);
                       if (!data.turkinfo || !data.turkbalance || data.hitinfo.num_hits==0) {
 						  $('#openEditModalButton').attr("disabled", false);
 						  if (!data.turkinfo){
@@ -226,8 +226,8 @@ $('#addAdmin').click(function(evt) {
 							}
 						  }
                           $('#admin-begin-run-original').hide();
-                          $('#upload-btn').attr("disabled", false);						  
-                          $('#upload-btn-title').attr("title", "");						  
+                          $('#upload-btn').attr("disabled", false);
+                          $('#upload-btn-title').attr("title", "");
                       } else {
                           $('#admin-turk-info').html('MTurk authenticated. Current balance: ' + data.turkbalance);
                           if (updateTurkInfo) {
@@ -235,12 +235,12 @@ $('#addAdmin').click(function(evt) {
 								$('#staticBonusPayment').val(data.turkinfo.bonus);
 								$('#staticHitTitle').val(data.turkinfo.title);
 								$('#staticHitDescription').val(data.turkinfo.description);
-								$('#staticHitKeywords').val(data.turkinfo.keywords);							  
-								$('#staticHitLifetime').val(data.turkinfo.lifetime);							  
-								$('#staticHitLocales').val(data.turkinfo.locales);							  
-								$('#staticHitPCapproved').val(data.turkinfo.pcapproved);							  
+								$('#staticHitKeywords').val(data.turkinfo.keywords);
+								$('#staticHitLifetime').val(data.turkinfo.lifetime);
+								$('#staticHitLocales').val(data.turkinfo.locales);
+								$('#staticHitPCapproved').val(data.turkinfo.pcapproved);
                                 $('#staticHitMinCompleted').val(data.turkinfo.mincompleted);
-                                $('#staticInvalidReplacementIntervalSeconds').val(data.turkinfo.invalidReplacementIntervalSeconds);                                                            
+                                $('#staticInvalidReplacementIntervalSeconds').val(data.turkinfo.invalidReplacementIntervalSeconds);
                           }
                           if (data.turkinfo.running) {
                               var amazonLink = data.turkinfo.admin_host + "/mturk/manageHIT?HITId=" + data.turkinfo.hitid;
@@ -267,7 +267,7 @@ $('#addAdmin').click(function(evt) {
   							              $('#openEditModalButton').attr("disabled", false);
                               $('#submit-task-info').html("<strong>Projected Costs: $" + (1.2 * data.hitinfo.num_hits * (data.turkinfo.hitpayment + 0.01)).toFixed(2) + " - $" + (1.2 * data.hitinfo.num_hits * (data.turkinfo.hitpayment + data.turkinfo.bonus)).toFixed(2) + "</strong> (incl. MTurk fees) <br>(" + data.hitinfo.num_hits + " HITs with " + data.turkinfo.hitpayment + " reward and up to " + data.turkinfo.bonus + " bonus per HIT) <br> <strong>Available funds in " + data.environment + " mode: $" +  data.turkbalance + "</strong>");
                           }
-                          
+
                       }
                       $('#admin-xml-upload').show();
                       $('#admin-mturk-cred').show();
@@ -338,7 +338,7 @@ $('#addAdmin').click(function(evt) {
                       $aed.scrollTop($aed[0].scrollHeight);
                   }
 	  }
-      
+
       function showTasks(hid) {
           var $h = $('#admin-hit-tasks');
           $h.hide().empty();
@@ -356,10 +356,10 @@ $('#addAdmin').click(function(evt) {
               $h.slideDown();
           });
       }
-            
+
       function uploadXML() {
           $('#upload-btn').hide();
-          $('#upload-btn-loading').show();		  
+          $('#upload-btn-loading').show();
           $("#xml-upload-error").hide();
           $("#xml-upload-success").hide();
           var data = new FormData();
@@ -373,7 +373,7 @@ $('#addAdmin').click(function(evt) {
               type: 'POST',
               success: function(data){
 				  $('#upload-btn').show();
-				  $('#upload-btn-loading').hide();		  
+				  $('#upload-btn-loading').hide();
                   if (data.success !== undefined) {
                       var $succ = $("#xml-upload-success");
                       $succ.text("Successfully uploaded.")
@@ -388,7 +388,7 @@ $('#addAdmin').click(function(evt) {
               },
               error: function () {
 				  $('#upload-btn').show();
-				  $('#upload-btn-loading').hide();		  
+				  $('#upload-btn-loading').hide();
               }
           });
       }
@@ -416,4 +416,3 @@ function reloadAdminList() {
 	  }
   });
 }
-

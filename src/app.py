@@ -16,7 +16,7 @@ import asyncio
 import Settings
 
 from tornado.options import define, options
- 
+
 define('config', default="config.json", help="JSON file with config parameters such as Google authentication, AWS mTurl parameters, port, environ., and database", type=str)
 define('environment', default="development", help="server environment", type=str)
 define('drop', default="", help="pass REALLYREALLY to drop the db", type=str)
@@ -31,12 +31,12 @@ import handlers
 
 def random256() :
     return base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes)
- 
+
 class Application(tornado.web.Application):
     def __init__(self, drop):
         self.db = pymongo.MongoClient()[app_config.db_name]
         if drop == "REALLYREALLY" :
-            pymongo.MongoClient().drop_database(app_config.db_name)        
+            pymongo.MongoClient().drop_database(app_config.db_name)
             print("Cleared.")
             sys.exit(0)
 
@@ -49,7 +49,7 @@ class Application(tornado.web.Application):
             "root_path": Settings.ROOT_PATH,
             "login_url": "/admin/login/",
             "environment" : app_config.environment,
-            "google_oauth" :{"key": app_config.google['client_id'], "secret": app_config.google['client_secret']}           
+            "google_oauth" :{"key": app_config.google['client_id'], "secret": app_config.google['client_secret']}
         }
 
         app_handlers = [
@@ -105,7 +105,7 @@ class Application(tornado.web.Application):
             self.ensure_automatic_make_payments()
 
         self.add_extra_assignments()
-    
+
     @property
     def logging(self) :
         return Settings.logging
@@ -133,12 +133,13 @@ class Application(tornado.web.Application):
         def _addAssignments() :
             def callback() :
                 #now loop through pending assignments
-                extra_assignments=self.hit_controller.convert_pending_to_extra()
-                self.logging.info(u"adding "+extra_assignments+" extra assignments")
+                self.logging.info("Checking pending HITs")
+                extra_assignments=self.chit_controller.convert_pending_to_extra()
                 if extra_assignments>0:
+                    self.logging.info(f"adding {extra_assignments} extra assignments")
                     self.mturkconnection_controller.add_assignment(extra_assignments=extra_assignments,
                                                       environment=self.settings['environment'])
-            callback_time = 30 # 30 seconds
+            callback_time = 1000 * 30 # 30 seconds
             pc = tornado.ioloop.PeriodicCallback(callback, callback_time)
             pc.start()
         # run this from the main ioloop just in case we have multiple threads
@@ -159,7 +160,7 @@ def start() :
         ioloop.start()
     except :
         ioloop.add_callback(lambda : ioloop.stop())
-        
+
 
 def start_as_daemon() :
     import daemon

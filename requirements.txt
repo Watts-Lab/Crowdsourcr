@@ -1,17 +1,17 @@
 #apt-get install pip
 #pip install -r requirements.txt
 
- pip install tornado
- pip install pymongo
- pip install boto3
- pip install validators
- pip install future-fstrings
- pip install jsonpickle
- pip install xmltodict
- pip install ImageHash
- pip install pycountry
- pip install spacy
- python -m spacy download en_core_web_sm
+pip install tornado;
+pip install pymongo;
+pip install boto3;
+pip install validators;
+pip install future-fstrings;
+pip install jsonpickle;
+pip install xmltodict;
+pip install ImageHash;
+pip install pycountry;
+pip install spacy;
+python -m spacy download en_core_web_sm;
 
 # Only if on linux
 #pip install python-daemon

@@ -30,24 +30,24 @@ class CHITController(object):
         ct = datetime.datetime.utcnow()
         min_seconds = 30.0
         print(outstanding_hits)
-        d = self.db.chits.find_one({'$and' : 
+        d = self.db.chits.find_one({'$and' :
                                     [{ 'num_completed_hits' : {'$lt' : 1} },
                                      { 'exclusions' : {'$nin' : exclusions}},
                                      { 'hitid' : {'$nin' : outstanding_hits} } ] },
                                    {'hitid' : 1})
         if not d:
             for sh in stale_hits :
-                if (ct - sh['lastping']).total_seconds() > min_seconds : 
-                    d = self.db.chits.find_one({'$and' : 
+                if (ct - sh['lastping']).total_seconds() > min_seconds :
+                    d = self.db.chits.find_one({'$and' :
                                                 [{ 'num_completed_hits' : {'$lt' : 1} },
                                                  { 'exclusions' : {'$nin' : exclusions}},
                                                  { 'hitid' : sh['hitid']} ]},
                                                {'hitid' : 1})
                     if d :
                         break
-                
-                
-                
+
+
+
         if d and workerid :
             self.db.chitloads.insert({'workerid' : workerid,
                                       'time' : datetime.datetime.utcnow(),
@@ -83,7 +83,7 @@ class CHITController(object):
                               '$inc' : {'num_completed_hits' : 1}})
         return hit_info
     def add_completed_hit_validation_notpassed(self,chit=None, worker_id=None):
-        d = self.db.chits.find_one({'hitid' : chit.hitid}) 
+        d = self.db.chits.find_one({'hitid' : chit.hitid})
         hit_info = {'worker_id' : worker_id, 'turk_verify_code' : uuid.uuid4().hex[:16]}
         if d["num_completed_hits_validation_notpassed"]<d["invalidRetries"]:
             self.db.chits.update({'hitid' : chit.hitid},
@@ -91,19 +91,24 @@ class CHITController(object):
                              '$inc' : {'num_completed_hits_validation_notpassed' : 1},
                              '$inc' : {'num_pending_extra_assignments' : 1},
                              '$push' : {'pending_extra_assignments' : datetime.datetime.utcnow()}
-                             })                             
+                             })
         else:
             self.db.chits.update({'hitid' : chit.hitid},
                              {'$push' : {'completed_hits_validation_notpassed' : hit_info},
                              '$inc' : {'num_completed_hits_validation_notpassed' : 1}
-                             })                             
+                             })
         return hit_info
+
     def convert_pending_to_extra(self):
         converted=0
-        d=self.db.mturkconnections.find_one()
+
+        d = self.db.mturkconnections.find_one()
+        if d is None:
+            return converted
+
         invalidReplacementIntervalSeconds=d['invalidReplacementIntervalSeconds']
         cutoff = datetime.datetime.utcnow() - datetime.timedelta(seconds=invalidReplacementIntervalSeconds)
-        d = self.db.chits.find() 
+        d = self.db.chits.find()
         for r in d:
             remainingPending=[]
             changes=0
@@ -167,7 +172,7 @@ class CHITController(object):
                           'turk_verify_code' : secret_code}
         either_hit_info = [hit_info, lower_hit_info]
         #ugly hack. TODO: improve storage struture for easier searching
-        d = db.chits.find_one({'$and' : 
+        d = db.chits.find_one({'$and' :
                                [{'num_completed_hits' : {"$gte" : 1}},
                                 {'completed_hits' : {'$in' : either_hit_info}}]})
         return True if d else False
