@@ -79,7 +79,7 @@
     <task>
       <content>extra_task.html</content>
       <taskid>2</taskid>
-      <modules>numbers</modules>
+      <modules>extra</modules>
     </task>
   </tasks>
   
@@ -146,7 +146,7 @@
       ]]></content>
     </document>
     <document>
-      <name>conditional_task.html</name>
+      <name>extra_task.html</name>
       <content>
         <![CDATA[
       <p>The task you are on is an extra task if you pass validation. You have reached this task because you answered the first question 

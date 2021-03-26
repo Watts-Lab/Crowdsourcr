@@ -90,10 +90,8 @@ class CHITController(object):
             self.db.chits.update(
                 {'hitid' : chit.hitid},
                 {
-                 '$push' : {'completed_hits_validation_notpassed' : hit_info},
-                 '$inc' : {'num_completed_hits_validation_notpassed' : 1},
-                 '$inc' : {'num_pending_extra_assignments' : 1},
-                 '$push' : {'pending_extra_assignments' : datetime.datetime.utcnow()}
+                 '$inc' : {'num_completed_hits_validation_notpassed' : 1, 'num_pending_extra_assignments' : 1},
+                 '$push' : {'completed_hits_validation_notpassed' : hit_info, 'pending_extra_assignments' : datetime.datetime.utcnow()}
                 }
              )
         else:

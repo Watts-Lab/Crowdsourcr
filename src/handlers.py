@@ -710,17 +710,17 @@ class CSVDownloadHandler(BaseHandler):
         - question_responses.tsv: contains the responses to all questions
         """
         completed_workers = self.chit_controller.get_workers_with_completed_hits()
+        completed_workers_invalid = self.chit_controller.get_workers_with_completed_hits_validation_notpassed()
 
         task_submission_times_output = io.StringIO()
         task_submission_times_csvwriter = csv.writer(task_submission_times_output, delimiter='\t')
-        self.cresponse_controller.write_task_submission_times_to_csv(task_submission_times_csvwriter, completed_workers=completed_workers)
+        self.cresponse_controller.write_task_submission_times_to_csv(task_submission_times_csvwriter, completed_workers=completed_workers+completed_workers_invalid)
 
         question_responses_output = io.StringIO()
         question_responses_csvwriter = csv.writer(question_responses_output, delimiter='\t')
         self.cresponse_controller.write_question_responses_to_csv(question_responses_csvwriter, completed_workers=completed_workers)
 
         #add invalid submissions
-        completed_workers_invalid = self.chit_controller.get_workers_with_completed_hits_validation_notpassed()
         question_responses_invalid_output = io.StringIO()
         question_responses_invalid_csvwriter = csv.writer(question_responses_invalid_output, delimiter='\t')
         self.cresponse_controller.write_question_responses_to_csv(question_responses_invalid_csvwriter, completed_workers=completed_workers_invalid)
