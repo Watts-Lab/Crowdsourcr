@@ -30,6 +30,7 @@ class CHIT(object):
         self.num_extra_assignments = num_extra_assignments
         self.num_pending_extra_assignments = num_pending_extra_assignments
         self.pending_extra_assignments = pending_extra_assignments
+
     @classmethod
     def deserialize(cls, d):
         return cls(**d)

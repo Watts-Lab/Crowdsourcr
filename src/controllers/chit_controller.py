@@ -82,16 +82,20 @@ class CHITController(object):
                              {'$push' : {'completed_hits' : hit_info},
                               '$inc' : {'num_completed_hits' : 1}})
         return hit_info
+
     def add_completed_hit_validation_notpassed(self,chit=None, worker_id=None):
         d = self.db.chits.find_one({'hitid' : chit.hitid})
         hit_info = {'worker_id' : worker_id, 'turk_verify_code' : uuid.uuid4().hex[:16]}
-        if d["num_completed_hits_validation_notpassed"]<d["invalidRetries"]:
-            self.db.chits.update({'hitid' : chit.hitid},
-                             {'$push' : {'completed_hits_validation_notpassed' : hit_info},
-                             '$inc' : {'num_completed_hits_validation_notpassed' : 1},
-                             '$inc' : {'num_pending_extra_assignments' : 1},
-                             '$push' : {'pending_extra_assignments' : datetime.datetime.utcnow()}
-                             })
+        if d["num_completed_hits_validation_notpassed"] < d["numRetries"]:
+            self.db.chits.update(
+                {'hitid' : chit.hitid},
+                {
+                 '$push' : {'completed_hits_validation_notpassed' : hit_info},
+                 '$inc' : {'num_completed_hits_validation_notpassed' : 1},
+                 '$inc' : {'num_pending_extra_assignments' : 1},
+                 '$push' : {'pending_extra_assignments' : datetime.datetime.utcnow()}
+                }
+             )
         else:
             self.db.chits.update({'hitid' : chit.hitid},
                              {'$push' : {'completed_hits_validation_notpassed' : hit_info},

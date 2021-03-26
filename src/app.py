@@ -135,7 +135,7 @@ class Application(tornado.web.Application):
                 #now loop through pending assignments
                 self.logging.info("Checking pending HITs")
                 extra_assignments=self.chit_controller.convert_pending_to_extra()
-                if extra_assignments>0:
+                if extra_assignments > 0:
                     self.logging.info(f"adding {extra_assignments} extra assignments")
                     self.mturkconnection_controller.add_assignment(extra_assignments=extra_assignments,
                                                       environment=self.settings['environment'])
