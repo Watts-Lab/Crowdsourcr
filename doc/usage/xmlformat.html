@@ -130,6 +130,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#isomorphic-tasks-and-modules">Isomorphic Tasks and Modules</a></li>
+<li><a class="reference internal" href="#chit-validation-and-automatic-reassignments">cHIT Validation and Automatic Reassignments</a></li>
 </ul>
 </li>
 </ul>
@@ -253,6 +254,11 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#isomorphic-tasks-and-modules">
    Isomorphic Tasks and Modules
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#chit-validation-and-automatic-reassignments">
+   cHIT Validation and Automatic Reassignments
   </a>
  </li>
 </ul>
@@ -1021,6 +1027,47 @@ above example, each task has a single module:</p>
 </div>
 <p>The two modules <code class="docutils literal notranslate"><span class="pre">numbers</span></code> and <code class="docutils literal notranslate"><span class="pre">numbersreverse</span></code> are isomorphic and contain the same questions except that they appear in reverse
 order in the latter module.</p>
+</div>
+<div class="section" id="chit-validation-and-automatic-reassignments">
+<h2>cHIT Validation and Automatic Reassignments<a class="headerlink" href="#chit-validation-and-automatic-reassignments" title="Permalink to this headline">¶</a></h2>
+<p>Some cHITs require training that not all workers might pass. This poses a problem because (a) you are left with incomplete data and (b) if you use bonuses and double data entry
+you might inadvertently underpay matched workers who completed the same tasks as the worker who did not pass validation.</p>
+<p>You can avoid underpayments by marking training questions as <code class="docutils literal notranslate"><span class="pre">aprioripermissable</span></code>. This will ensure that workers are only compared to the set of workers who pass validation.</p>
+<p>However, this does not address the incomplete data problem. Moreover, you might now overpay workers with threshold bonuses who pass validation because they are now compared only to a single worker (themselves).</p>
+<p>In order to address this problem you can attach a validation condition to any cHIT. If the validation condition is not satisfied you can specify a certain number of <code class="docutils literal notranslate"><span class="pre">retries</span></code>
+(default is 0) and create replacement assignments. In order to discourage bots these replacement assignments are created with delay. This delay is set in the cHIT admin panel
+(default is 600 seconds).</p>
+<p>An example for validated cHITs is provided in <code class="docutils literal notranslate"><span class="pre">questions_with_validation.xml</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;hit&gt;
+&lt;hitid&gt;1&lt;/hitid&gt;
+&lt;tasks&gt;1 2&lt;/tasks&gt;
+&lt;taskconditions&gt;
+  &lt;taskcondition&gt;
+    &lt;taskid&gt;2&lt;/taskid&gt;
+    &lt;condition&gt;
+      &lt;![CDATA[
+  1*numbers*number1==22
+  ]]&gt;
+    &lt;/condition&gt;
+  &lt;/taskcondition&gt;
+&lt;/taskconditions&gt;
+&lt;validsubmission&gt;
+  &lt;condition&gt;
+  &lt;![CDATA[
+    1*numbers*number1==22
+  ]]&gt;
+  &lt;/condition&gt;
+  &lt;invalidRetries&gt;
+    3
+  &lt;/invalidRetries&gt;
+&lt;/validsubmission&gt;
+&lt;/hit&gt;
+</pre></div>
+</div>
+<p>Validation is enclosed in the <code class="docutils literal notranslate"><span class="pre">validSubmission</span></code> tag. The <code class="docutils literal notranslate"><span class="pre">condition</span></code> property specifies a valid submission (using the same syntax as task conditions). The <code class="docutils literal notranslate"><span class="pre">invalidRetries</span></code>
+property specifies the maximum number of replacement assignments that are created after invalid submissions.</p>
+<p>Invalid submissions do not receive a bonus (even if you specify bonus points). Invalid submissions are also not included in the main datafile but as a separate file
+contained within the downloaded zip file.</p>
 </div>
 </div>
 

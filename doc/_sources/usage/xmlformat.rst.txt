@@ -827,3 +827,53 @@ above example, each task has a single module:
 
 The two modules ``numbers`` and ``numbersreverse`` are isomorphic and contain the same questions except that they appear in reverse 
 order in the latter module.
+
+cHIT Validation and Automatic Reassignments
+--------------------------------------------
+
+Some cHITs require training that not all workers might pass. This poses a problem because (a) you are left with incomplete data and (b) if you use bonuses and double data entry
+you might inadvertently underpay matched workers who completed the same tasks as the worker who did not pass validation.
+
+You can avoid underpayments by marking training questions as ``aprioripermissable``. This will ensure that workers are only compared to the set of workers who pass validation.
+
+However, this does not address the incomplete data problem. Moreover, you might now overpay workers with threshold bonuses who pass validation because they are now compared only to a single worker (themselves).
+
+In order to address this problem you can attach a validation condition to any cHIT. If the validation condition is not satisfied you can specify a certain number of ``retries`` 
+(default is 0) and create replacement assignments. In order to discourage bots these replacement assignments are created with delay. This delay is set in the cHIT admin panel 
+(default is 600 seconds).
+
+An example for validated cHITs is provided in ``questions_with_validation.xml``:
+
+::
+
+  <hit>
+  <hitid>1</hitid>
+  <tasks>1 2</tasks>
+  <taskconditions>
+    <taskcondition>
+      <taskid>2</taskid>
+      <condition>
+        <![CDATA[
+    1*numbers*number1==22
+    ]]>
+      </condition>
+    </taskcondition>
+  </taskconditions>
+  <validsubmission>
+    <condition>
+    <![CDATA[
+      1*numbers*number1==22
+    ]]>
+    </condition>
+    <invalidRetries>
+      3
+    </invalidRetries>
+  </validsubmission>
+  </hit>
+
+
+Validation is enclosed in the ``validSubmission`` tag. The ``condition`` property specifies a valid submission (using the same syntax as task conditions). The ``invalidRetries`` 
+property specifies the maximum number of replacement assignments that are created after invalid submissions.
+
+Invalid submissions do not receive a bonus (even if you specify bonus points). Invalid submissions are also not included in the main datafile but as a separate file 
+contained within the downloaded zip file.

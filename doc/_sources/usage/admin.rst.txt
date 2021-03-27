@@ -142,10 +142,11 @@ You can specifically modify the following parameters:
 - HIT title 
 - HIT description
 - HIT keywords
-- Lifetime of HIT
+- Lifetime of cHIT
 - worker locale (Comma-delimited list of ISO 3166 countries and/or subdivisions (such as US or US-CA).)
 - workers with minimum percent approved HITs (any integer between 0 and 100)
 - workers with minimum number of completed HITs (any non-negative integer)
+- Time (in seconds) to create replacement cHITs after an invalid cHIT has been submitted
 
 The bonus amount determines the maximum bonus a worker receives:
 
@@ -155,7 +156,7 @@ The bonus amount determines the maximum bonus a worker receives:
 - Crowdsourcr calculates the share of bonus points earned among total possible points.
 - This shares is multiplied by the bonus amount in the cHIT Tab and determines the actual bonus paid to a worker.
 
-Note, that if questions are assigned to only one worker in the XML then the bonus will always be zero.
+Note, that if questions are assigned to only one worker in the XML then the bonus will always be zero for linear bonus (which is calculated as share of other workers who agree) but there will be full bonus for any type of threshold bonus.
 
 Superadmin panel
 ----------------

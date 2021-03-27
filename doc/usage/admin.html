@@ -300,10 +300,11 @@ modify how a cHIT is advertised as an Amazon Turk HIT. While there is an ongoing
 <li><p>HIT title</p></li>
 <li><p>HIT description</p></li>
 <li><p>HIT keywords</p></li>
-<li><p>Lifetime of HIT</p></li>
+<li><p>Lifetime of cHIT</p></li>
 <li><p>worker locale (Comma-delimited list of ISO 3166 countries and/or subdivisions (such as US or US-CA).)</p></li>
 <li><p>workers with minimum percent approved HITs (any integer between 0 and 100)</p></li>
 <li><p>workers with minimum number of completed HITs (any non-negative integer)</p></li>
+<li><p>Time (in seconds) to create replacement cHITs after an invalid cHIT has been submitted</p></li>
 </ul>
 <p>The bonus amount determines the maximum bonus a worker receives:</p>
 <ul class="simple">
@@ -313,7 +314,7 @@ modify how a cHIT is advertised as an Amazon Turk HIT. While there is an ongoing
 <li><p>Crowdsourcr calculates the share of bonus points earned among total possible points.</p></li>
 <li><p>This shares is multiplied by the bonus amount in the cHIT Tab and determines the actual bonus paid to a worker.</p></li>
 </ul>
-<p>Note, that if questions are assigned to only one worker in the XML then the bonus will always be zero.</p>
+<p>Note, that if questions are assigned to only one worker in the XML then the bonus will always be zero for linear bonus (which is calculated as share of other workers who agree) but there will be full bonus for any type of threshold bonus.</p>
 </div>
 </div>
 <div class="section" id="superadmin-panel">
