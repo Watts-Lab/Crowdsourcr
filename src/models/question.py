@@ -96,6 +96,8 @@ class Question(object) :
             for v in lex.varlist:
                 for r in module_responses:
                     if v==r['varname']:
+                        if "response" not in r:
+                            return True
                         if r["response"] not in varnameValuetype[r["varname"]]["aprioripermissable"]:
                             return True
         allVariables=dict()
