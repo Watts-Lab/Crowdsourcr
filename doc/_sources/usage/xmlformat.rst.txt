@@ -9,7 +9,11 @@ to Crowdsourcr).
 
 For instructional examples, load and view (in labeled order) the files located in the examples folder. 
 
-The main structure of the XML file is as follows:
+You can hand-draft XML files or create them programmatically. The ``__surveyCreation`` folder inside the ``examples`` folder has an example of how to create a 
+survey XML file programmatically. However, it is sometimes easier to hand-craft at least parts of a survey in order interactively test the functionality. For example, 
+the survey ``iterator_example.xml`` is a hand-crafted survey which was later incorporated into a Python script that creates the full survey.
+
+The main structure of a survey XML file is as follows:
 ::
 
  <xml>
@@ -47,6 +51,71 @@ questions:
      ... question definitions ...
    </questions>
  </module>
+
+
+Iterators
++++++++++++
+ 
+Sometimes you design surveys with almost identical modules. Consider the survey ``iterator_example.xml``. In this survey, respondents are asked to answer questions on 
+three sentences. Each module corresponds to one sentence and contains otherwise exactly the same questions. 
+
+One solution would be to simply replicate the module three times. However, this is error-prone when hand-crafting a survey. Crowdsourcr provides an interator tag as follows:
+
+::
+
+ <module>
+ <iterator>
+    <dimensions>
+        <dimension>
+            <name>SENTENCE</name>
+            <instances>
+                <instance>
+                  <kvpairs>
+                    <kvpair>
+                      <key>ID</key>
+                      <value>1</value>
+                    </kvpair>
+                  </kvpairs>
+                </instance>
+                <instance>
+                  <kvpairs>
+                    <kvpair>
+                      <key>ID</key>
+                      <value>2</value>
+                    </kvpair>
+                  </kvpairs>
+                </instance>
+                <instance>
+                  <kvpairs>
+                    <kvpair>
+                      <key>ID</key>
+                      <value>3</value>
+                    </kvpair>
+                  </kvpairs>
+                </instance>
+                <instance>
+                  <kvpairs>
+                    <kvpair>
+                      <key>ID</key>
+                      <value>4</value>
+                    </kvpair>
+                  </kvpairs>
+                </instance>
+            </instances>
+        </dimension>
+    </dimensions>
+ </iterator>
+ <name>s{SENTENCE:ID}</name>
+ <header>Sentence {SENTENCE:ID}</header>
+ <contentUpdate>highlight;s{SENTENCE:ID}</contentUpdate>
+ (..)
+ </module>
+ 
+The iterator defines an interator dimension called ``SENTENCE``. In this example there is a single dimension but there could be several dimensions (for example,
+a secondary dimension could be political slant if you want to create a version of the module that is aimed to ask about republican/democratic slant of a sentence).
+The iterator then iterates over ``instances``. In this example, there are four instances. Each instance defines a set of variable allocations that hold within that
+instance. In this example, there is a single variable called ``ID`` that can take the values 1 to 4 in the four instances. Crowdsourcr will therefore internally
+create 4 modules named ``s1`` to ``s4``.
 
 Questions
 ---------
@@ -306,6 +375,139 @@ The variable will only store an image hash. The raw BASE64-encoded image will be
 added. For example, ``nyt_logo`` will become ``ny_logo_raw`` while ``nyt_logo`` will hold the hash. The image hash allows you to
 compare the similarity through simple differences. A threshold difference of 20 is internally used for defining two images
 as identical for bonus calculations.
+
+Autocomplete questions
+++++++++++++++++++++++
+
+You can create text questions with auto-complete. 
+
+::
+
+  <question>
+  <varname>sentence_quote_speaker_specific_person</varname>
+  <questiontext>Please specify the name of the person. Use the auto-complete where possible.</questiontext>
+  <condition>
+    <![CDATA[
+      ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))&({SPEAKER:CONDITION}) 
+    ]]>
+  </condition>
+  <valuetype>autocomplete</valuetype>
+  <options>
+    <sureLabel>Name of the {SPEAKER:LONG1}</sureLabel>
+    <sureLabelPlaceholder>Specify name of {SPEAKER:LONG2}</sureLabelPlaceholder>
+    <unsureLabel>Quoted {SPEAKER:LONG3} cannot be identified</unsureLabel>
+    <autoCompleteUrl>https://www.autocomplete.econlabs.org/api/auto/getperson</autoCompleteUrl>
+  </options>
+  </question>
+
+Autocomplete questions are identical to standard text questions except that you define a link to an autocomplete service (by url). This service has to accept GET requests
+with query parameter ``q`` and value equal to the partial entry in the textbox. The result has to be delivered as a JSON array.
+
+.. figure:: ../doc_img/crowdsourcer_autocomplete.png
+   :align: center
+
+
+Iterators
++++++++++++
+
+Sometimes you design surveys with almost identical questions. This happens often when you have conditional questions. 
+
+Consider the survey ``iterator_example.xml``. In this survey, respondents are asked to answer questions on sentences in articles. 
+In a previous question they were asked whether the sentence is in the author's own words or quoting someone 
+else (directly or indirectly). In this question the respondent specifies whether the author's own words/the quote are expressing a fact or an opinion.
+We want to create different question wordings depending on whether the respondent previously classified the sentence as author's own words or a quote.
+
+::
+
+ <question>
+ <iterator>
+    <dimensions>
+      <dimension>
+         <name>SENTENCE</name>
+         <instances>
+            <instance>
+               <kvpairs>
+                 <kvpair>
+                   <key>SHORT</key>
+                   <value>ownwords</value>
+                 </kvpair>
+                 <kvpair>
+                   <key>CONDITION</key>
+                   <value>sentence==ownwords</value>
+                 </kvpair>
+                 <kvpair>
+                   <key>LONG</key>
+                   <value>author</value>
+                 </kvpair>
+               </kvpairs>
+            </instance>
+            <instance>
+               <kvpairs>
+                 <kvpair>
+                   <key>SHORT</key>
+                   <value>quote</value>
+                 </kvpair>
+                 <kvpair>
+                   <key>CONDITION</key>
+                   <value><![CDATA[
+                   ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))&(exists{sentence_quote_speaker_specific_*})
+                   ]]>
+                   </value>
+                 </kvpair>
+                 <kvpair>
+                   <key>LONG</key>
+                   <value>quoted person or organization</value>
+                 </kvpair>
+               </kvpairs>
+            </instance>
+         </instances>
+      </dimension>
+    </dimensions>
+  </iterator>
+  <varname>sentence_{SENTENCE:SHORT}_contenttype</varname>
+  <questiontext>The {SENTENCE:LONG} is ... </questiontext>
+  <condition>
+  <![CDATA[
+  {SENTENCE:CONDITION}
+  ]]>
+  </condition>
+  <valuetype>categorical</valuetype>
+  <content>
+  <categories>
+    <category>
+      <text>... making a factual statement. Such a statement can be proven to be true or false through objective evidence.|Supporting evidence that proves the statement true or false already exists.</text>
+      <value>fact_existing</value>
+    </category>
+    <category>
+      <text>... making a factual statement. Such a statement can be proven to be true or false through objective evidence.|Supporting evidence that will prove the statement true or false will likely exist in the future (for example for a new scientific theory).</text>
+      <value>fact_pending</value>
+    </category>
+    <category>
+      <text>... stating an opinion|an emotion or an attitude</text>
+      <value>opinion_emotion</value>
+    </category>
+    <category>
+      <text>... stating an opinion|a value judgment</text>
+      <value>opinion_judgment</value>
+    </category>
+    <category>
+      <text>... stating an opinion|an unprovable belief (for example a statement such as "Destiny guides our lives.")</text>
+      <value>opinion_unprovable</value>
+    </category>
+    <category>
+      <text>... neither a factual statement nor an opinion.</text>
+      <value>neither</value>
+    </category>
+  </categories>
+  </content>
+  </question>
+
+
+The iterator defines an interator dimension called ``SENTENCE``. In this example there is a single dimension but there could be several dimensions (just like for modules).
+The iterator then iterates over ``instances``. In this example, there are two instances: one for ``ownwords'' and one for ``quote``. Each instance defines a set of variable 
+allocations that hold within that instance. In this example, there are three variables called ``SHORT``, ``LONG`` and ``CONDITION`` that take the appropriate values for
+each instance. Crowdsourcr will therefore internally create 2 questions named ``sentence_ownwords`` and ``sentence_quote``.
+
 
 Tasks
 -----

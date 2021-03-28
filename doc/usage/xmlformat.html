@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>XML Format &#8212; Crowdsourcr 2.2 documentation</title>
+    <title>XML Format &#8212; Crowdsourcr 2.3 documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.101715efdecc9b59cb6e1ddfa685c31f.css" rel="stylesheet" />
@@ -104,7 +104,10 @@
   <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">XML Format</a><ul>
-<li><a class="reference internal" href="#modules">Modules</a></li>
+<li><a class="reference internal" href="#modules">Modules</a><ul>
+<li><a class="reference internal" href="#iterators">Iterators</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#questions">Questions</a><ul>
 <li><a class="reference internal" href="#numeric-questions">Numeric questions</a></li>
 <li><a class="reference internal" href="#text-questions">Text questions</a></li>
@@ -112,6 +115,8 @@
 <li><a class="reference internal" href="#nested-categorical-questions">Nested categorical questions</a></li>
 <li><a class="reference internal" href="#scale-questions">Scale questions</a></li>
 <li><a class="reference internal" href="#image-upload-questions">Image upload questions</a></li>
+<li><a class="reference internal" href="#autocomplete-questions">Autocomplete questions</a></li>
+<li><a class="reference internal" href="#id2">Iterators</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#tasks">Tasks</a><ul>
@@ -162,6 +167,13 @@
   <a class="reference internal nav-link" href="#modules">
    Modules
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#iterators">
+     Iterators
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#questions">
@@ -196,6 +208,16 @@
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#image-upload-questions">
      Image upload questions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#autocomplete-questions">
+     Autocomplete questions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Iterators
     </a>
    </li>
   </ul>
@@ -284,7 +306,10 @@
 describing an experiment (see <a class="reference internal" href="admin.html#survey-tab"><span class="std std-ref">Survey Tab</span></a> for how to upload the XML file
 to Crowdsourcr).</p>
 <p>For instructional examples, load and view (in labeled order) the files located in the examples folder.</p>
-<p>The main structure of the XML file is as follows:</p>
+<p>You can hand-draft XML files or create them programmatically. The <code class="docutils literal notranslate"><span class="pre">__surveyCreation</span></code> folder inside the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder has an example of how to create a
+survey XML file programmatically. However, it is sometimes easier to hand-craft at least parts of a survey in order interactively test the functionality. For example,
+the survey <code class="docutils literal notranslate"><span class="pre">iterator_example.xml</span></code> is a hand-crafted survey which was later incorporated into a Python script that creates the full survey.</p>
+<p>The main structure of a survey XML file is as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">xml</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="n">modules</span><span class="o">&gt;</span>
     <span class="o">...</span> <span class="n">module</span> <span class="n">definitions</span> <span class="o">...</span>
@@ -318,6 +343,66 @@ questions:</p>
   <span class="o">&lt;/</span><span class="n">questions</span><span class="o">&gt;</span>
 <span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span>
 </pre></div>
+</div>
+<div class="section" id="iterators">
+<h3>Iterators<a class="headerlink" href="#iterators" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes you design surveys with almost identical modules. Consider the survey <code class="docutils literal notranslate"><span class="pre">iterator_example.xml</span></code>. In this survey, respondents are asked to answer questions on
+three sentences. Each module corresponds to one sentence and contains otherwise exactly the same questions.</p>
+<p>One solution would be to simply replicate the module three times. However, this is error-prone when hand-crafting a survey. Crowdsourcr provides an interator tag as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">iterator</span><span class="o">&gt;</span>
+   <span class="o">&lt;</span><span class="n">dimensions</span><span class="o">&gt;</span>
+       <span class="o">&lt;</span><span class="n">dimension</span><span class="o">&gt;</span>
+           <span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">SENTENCE</span><span class="o">&lt;/</span><span class="n">name</span><span class="o">&gt;</span>
+           <span class="o">&lt;</span><span class="n">instances</span><span class="o">&gt;</span>
+               <span class="o">&lt;</span><span class="n">instance</span><span class="o">&gt;</span>
+                 <span class="o">&lt;</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+                   <span class="o">&lt;</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">key</span><span class="o">&gt;</span><span class="n">ID</span><span class="o">&lt;/</span><span class="n">key</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">value</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">value</span><span class="o">&gt;</span>
+                   <span class="o">&lt;/</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                 <span class="o">&lt;/</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+               <span class="o">&lt;/</span><span class="n">instance</span><span class="o">&gt;</span>
+               <span class="o">&lt;</span><span class="n">instance</span><span class="o">&gt;</span>
+                 <span class="o">&lt;</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+                   <span class="o">&lt;</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">key</span><span class="o">&gt;</span><span class="n">ID</span><span class="o">&lt;/</span><span class="n">key</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">value</span><span class="o">&gt;</span><span class="mi">2</span><span class="o">&lt;/</span><span class="n">value</span><span class="o">&gt;</span>
+                   <span class="o">&lt;/</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                 <span class="o">&lt;/</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+               <span class="o">&lt;/</span><span class="n">instance</span><span class="o">&gt;</span>
+               <span class="o">&lt;</span><span class="n">instance</span><span class="o">&gt;</span>
+                 <span class="o">&lt;</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+                   <span class="o">&lt;</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">key</span><span class="o">&gt;</span><span class="n">ID</span><span class="o">&lt;/</span><span class="n">key</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">value</span><span class="o">&gt;</span><span class="mi">3</span><span class="o">&lt;/</span><span class="n">value</span><span class="o">&gt;</span>
+                   <span class="o">&lt;/</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                 <span class="o">&lt;/</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+               <span class="o">&lt;/</span><span class="n">instance</span><span class="o">&gt;</span>
+               <span class="o">&lt;</span><span class="n">instance</span><span class="o">&gt;</span>
+                 <span class="o">&lt;</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+                   <span class="o">&lt;</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">key</span><span class="o">&gt;</span><span class="n">ID</span><span class="o">&lt;/</span><span class="n">key</span><span class="o">&gt;</span>
+                     <span class="o">&lt;</span><span class="n">value</span><span class="o">&gt;</span><span class="mi">4</span><span class="o">&lt;/</span><span class="n">value</span><span class="o">&gt;</span>
+                   <span class="o">&lt;/</span><span class="n">kvpair</span><span class="o">&gt;</span>
+                 <span class="o">&lt;/</span><span class="n">kvpairs</span><span class="o">&gt;</span>
+               <span class="o">&lt;/</span><span class="n">instance</span><span class="o">&gt;</span>
+           <span class="o">&lt;/</span><span class="n">instances</span><span class="o">&gt;</span>
+       <span class="o">&lt;/</span><span class="n">dimension</span><span class="o">&gt;</span>
+   <span class="o">&lt;/</span><span class="n">dimensions</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">iterator</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="n">s</span><span class="p">{</span><span class="n">SENTENCE</span><span class="p">:</span><span class="n">ID</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">header</span><span class="o">&gt;</span><span class="n">Sentence</span> <span class="p">{</span><span class="n">SENTENCE</span><span class="p">:</span><span class="n">ID</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">header</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">contentUpdate</span><span class="o">&gt;</span><span class="n">highlight</span><span class="p">;</span><span class="n">s</span><span class="p">{</span><span class="n">SENTENCE</span><span class="p">:</span><span class="n">ID</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">contentUpdate</span><span class="o">&gt;</span>
+<span class="p">(</span><span class="o">..</span><span class="p">)</span>
+<span class="o">&lt;/</span><span class="n">module</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The iterator defines an interator dimension called <code class="docutils literal notranslate"><span class="pre">SENTENCE</span></code>. In this example there is a single dimension but there could be several dimensions (for example,
+a secondary dimension could be political slant if you want to create a version of the module that is aimed to ask about republican/democratic slant of a sentence).
+The iterator then iterates over <code class="docutils literal notranslate"><span class="pre">instances</span></code>. In this example, there are four instances. Each instance defines a set of variable allocations that hold within that
+instance. In this example, there is a single variable called <code class="docutils literal notranslate"><span class="pre">ID</span></code> that can take the values 1 to 4 in the four instances. Crowdsourcr will therefore internally
+create 4 modules named <code class="docutils literal notranslate"><span class="pre">s1</span></code> to <code class="docutils literal notranslate"><span class="pre">s4</span></code>.</p>
 </div>
 </div>
 <div class="section" id="questions">
@@ -551,6 +636,129 @@ example:</p>
 added. For example, <code class="docutils literal notranslate"><span class="pre">nyt_logo</span></code> will become <code class="docutils literal notranslate"><span class="pre">ny_logo_raw</span></code> while <code class="docutils literal notranslate"><span class="pre">nyt_logo</span></code> will hold the hash. The image hash allows you to
 compare the similarity through simple differences. A threshold difference of 20 is internally used for defining two images
 as identical for bonus calculations.</p>
+</div>
+<div class="section" id="autocomplete-questions">
+<h3>Autocomplete questions<a class="headerlink" href="#autocomplete-questions" title="Permalink to this headline">¶</a></h3>
+<p>You can create text questions with auto-complete.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;question&gt;
+&lt;varname&gt;sentence_quote_speaker_specific_person&lt;/varname&gt;
+&lt;questiontext&gt;Please specify the name of the person. Use the auto-complete where possible.&lt;/questiontext&gt;
+&lt;condition&gt;
+  &lt;![CDATA[
+    ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))&amp;({SPEAKER:CONDITION})
+  ]]&gt;
+&lt;/condition&gt;
+&lt;valuetype&gt;autocomplete&lt;/valuetype&gt;
+&lt;options&gt;
+  &lt;sureLabel&gt;Name of the {SPEAKER:LONG1}&lt;/sureLabel&gt;
+  &lt;sureLabelPlaceholder&gt;Specify name of {SPEAKER:LONG2}&lt;/sureLabelPlaceholder&gt;
+  &lt;unsureLabel&gt;Quoted {SPEAKER:LONG3} cannot be identified&lt;/unsureLabel&gt;
+  &lt;autoCompleteUrl&gt;https://www.autocomplete.econlabs.org/api/auto/getperson&lt;/autoCompleteUrl&gt;
+&lt;/options&gt;
+&lt;/question&gt;
+</pre></div>
+</div>
+<p>Autocomplete questions are identical to standard text questions except that you define a link to an autocomplete service (by url). This service has to accept GET requests
+with query parameter <code class="docutils literal notranslate"><span class="pre">q</span></code> and value equal to the partial entry in the textbox. The result has to be delivered as a JSON array.</p>
+<div class="figure align-center">
+<img alt="../_images/crowdsourcer_autocomplete.png" src="../_images/crowdsourcer_autocomplete.png" />
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Iterators<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes you design surveys with almost identical questions. This happens often when you have conditional questions.</p>
+<p>Consider the survey <code class="docutils literal notranslate"><span class="pre">iterator_example.xml</span></code>. In this survey, respondents are asked to answer questions on sentences in articles.
+In a previous question they were asked whether the sentence is in the author’s own words or quoting someone
+else (directly or indirectly). In this question the respondent specifies whether the author’s own words/the quote are expressing a fact or an opinion.
+We want to create different question wordings depending on whether the respondent previously classified the sentence as author’s own words or a quote.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;question&gt;
+&lt;iterator&gt;
+   &lt;dimensions&gt;
+     &lt;dimension&gt;
+        &lt;name&gt;SENTENCE&lt;/name&gt;
+        &lt;instances&gt;
+           &lt;instance&gt;
+              &lt;kvpairs&gt;
+                &lt;kvpair&gt;
+                  &lt;key&gt;SHORT&lt;/key&gt;
+                  &lt;value&gt;ownwords&lt;/value&gt;
+                &lt;/kvpair&gt;
+                &lt;kvpair&gt;
+                  &lt;key&gt;CONDITION&lt;/key&gt;
+                  &lt;value&gt;sentence==ownwords&lt;/value&gt;
+                &lt;/kvpair&gt;
+                &lt;kvpair&gt;
+                  &lt;key&gt;LONG&lt;/key&gt;
+                  &lt;value&gt;author&lt;/value&gt;
+                &lt;/kvpair&gt;
+              &lt;/kvpairs&gt;
+           &lt;/instance&gt;
+           &lt;instance&gt;
+              &lt;kvpairs&gt;
+                &lt;kvpair&gt;
+                  &lt;key&gt;SHORT&lt;/key&gt;
+                  &lt;value&gt;quote&lt;/value&gt;
+                &lt;/kvpair&gt;
+                &lt;kvpair&gt;
+                  &lt;key&gt;CONDITION&lt;/key&gt;
+                  &lt;value&gt;&lt;![CDATA[
+                  ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))&amp;(exists{sentence_quote_speaker_specific_*})
+                  ]]&gt;
+                  &lt;/value&gt;
+                &lt;/kvpair&gt;
+                &lt;kvpair&gt;
+                  &lt;key&gt;LONG&lt;/key&gt;
+                  &lt;value&gt;quoted person or organization&lt;/value&gt;
+                &lt;/kvpair&gt;
+              &lt;/kvpairs&gt;
+           &lt;/instance&gt;
+        &lt;/instances&gt;
+     &lt;/dimension&gt;
+   &lt;/dimensions&gt;
+ &lt;/iterator&gt;
+ &lt;varname&gt;sentence_{SENTENCE:SHORT}_contenttype&lt;/varname&gt;
+ &lt;questiontext&gt;The {SENTENCE:LONG} is ... &lt;/questiontext&gt;
+ &lt;condition&gt;
+ &lt;![CDATA[
+ {SENTENCE:CONDITION}
+ ]]&gt;
+ &lt;/condition&gt;
+ &lt;valuetype&gt;categorical&lt;/valuetype&gt;
+ &lt;content&gt;
+ &lt;categories&gt;
+   &lt;category&gt;
+     &lt;text&gt;... making a factual statement. Such a statement can be proven to be true or false through objective evidence.|Supporting evidence that proves the statement true or false already exists.&lt;/text&gt;
+     &lt;value&gt;fact_existing&lt;/value&gt;
+   &lt;/category&gt;
+   &lt;category&gt;
+     &lt;text&gt;... making a factual statement. Such a statement can be proven to be true or false through objective evidence.|Supporting evidence that will prove the statement true or false will likely exist in the future (for example for a new scientific theory).&lt;/text&gt;
+     &lt;value&gt;fact_pending&lt;/value&gt;
+   &lt;/category&gt;
+   &lt;category&gt;
+     &lt;text&gt;... stating an opinion|an emotion or an attitude&lt;/text&gt;
+     &lt;value&gt;opinion_emotion&lt;/value&gt;
+   &lt;/category&gt;
+   &lt;category&gt;
+     &lt;text&gt;... stating an opinion|a value judgment&lt;/text&gt;
+     &lt;value&gt;opinion_judgment&lt;/value&gt;
+   &lt;/category&gt;
+   &lt;category&gt;
+     &lt;text&gt;... stating an opinion|an unprovable belief (for example a statement such as &quot;Destiny guides our lives.&quot;)&lt;/text&gt;
+     &lt;value&gt;opinion_unprovable&lt;/value&gt;
+   &lt;/category&gt;
+   &lt;category&gt;
+     &lt;text&gt;... neither a factual statement nor an opinion.&lt;/text&gt;
+     &lt;value&gt;neither&lt;/value&gt;
+   &lt;/category&gt;
+ &lt;/categories&gt;
+ &lt;/content&gt;
+ &lt;/question&gt;
+</pre></div>
+</div>
+<p>The iterator defines an interator dimension called <code class="docutils literal notranslate"><span class="pre">SENTENCE</span></code>. In this example there is a single dimension but there could be several dimensions (just like for modules).
+The iterator then iterates over <code class="docutils literal notranslate"><span class="pre">instances</span></code>. In this example, there are two instances: one for <code class="docutils literal notranslate"><span class="pre">ownwords''</span> <span class="pre">and</span> <span class="pre">one</span> <span class="pre">for</span> <span class="pre">``quote</span></code>. Each instance defines a set of variable
+allocations that hold within that instance. In this example, there are three variables called <code class="docutils literal notranslate"><span class="pre">SHORT</span></code>, <code class="docutils literal notranslate"><span class="pre">LONG</span></code> and <code class="docutils literal notranslate"><span class="pre">CONDITION</span></code> that take the appropriate values for
+each instance. Crowdsourcr will therefore internally create 2 questions named <code class="docutils literal notranslate"><span class="pre">sentence_ownwords</span></code> and <code class="docutils literal notranslate"><span class="pre">sentence_quote</span></code>.</p>
 </div>
 </div>
 <div class="section" id="tasks">
@@ -875,7 +1083,7 @@ notinset{$workerid,excludedemographics}
 <p>The parser for conditions is the same as for <a class="reference internal" href="#task-condition"><span class="std std-ref">Task Conditions</span></a>. However, variable definitions are simplified and only use the variable name because conditions only apply within the context of a module.</p>
 </div>
 <div class="section" id="bonus">
-<span id="id2"></span><h2>Bonus<a class="headerlink" href="#bonus" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2>Bonus<a class="headerlink" href="#bonus" title="Permalink to this headline">¶</a></h2>
 <p>Crowdsourcr has an extensive bonus point framework. Bonus points serve two functions:</p>
 <p>First of all, they provide a currency to reward extra questions. This is useful when you have a lot of conditional branching
 and some hits might take longer than others. Second, you can reward accuracy by awarding bonus points for a task depending on the
@@ -1094,7 +1302,7 @@ contained within the downloaded zip file.</p>
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020, Microsoft Research.<br/>
+          &copy; Copyright 2021, Microsoft Research.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.2.<br/>
     </p>
   </div>

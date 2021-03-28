@@ -1,0 +1,786 @@
+<xml>
+  <modules>
+    <module>
+    <iterator>
+        <dimensions>
+            <dimension>
+                <name>SENTENCE</name>
+                <instances>
+                    <instance>
+                      <kvpairs>
+                        <kvpair>
+                          <key>ID</key>
+                          <value>1</value>
+                        </kvpair>
+                      </kvpairs>
+                    </instance>
+                    <instance>
+                      <kvpairs>
+                        <kvpair>
+                          <key>ID</key>
+                          <value>2</value>
+                        </kvpair>
+                      </kvpairs>
+                    </instance>
+                    <instance>
+                      <kvpairs>
+                        <kvpair>
+                          <key>ID</key>
+                          <value>3</value>
+                        </kvpair>
+                      </kvpairs>
+                    </instance>
+                    <instance>
+                      <kvpairs>
+                        <kvpair>
+                          <key>ID</key>
+                          <value>4</value>
+                        </kvpair>
+                      </kvpairs>
+                    </instance>
+                </instances>
+            </dimension>
+        </dimensions>
+      </iterator>
+      <header>Sentence {SENTENCE:ID}</header>
+	  <contentUpdate>highlight;s{SENTENCE:ID}</contentUpdate>
+      <name>s{SENTENCE:ID}</name>
+      <questions>
+        <question>
+          <varname>sentence</varname>
+          <questiontext>This sentence ... </questiontext>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>... are the author's own words.</text>
+                <value>ownwords</value>
+              </category>
+              <category>
+                <text>... is a direct quote.</text>
+                <value>directquote</value>
+              </category>
+              <category>
+                <text>... is an indirect quote.</text>
+                <value>indirectquote</value>
+              </category>
+              <category>
+                <text>... paraphrases a direct or indirect quote.</text>
+                <value>paraphrasequote</value>
+              </category>
+              <category>
+                <text>... does not appear to be part of an article.</text>
+                <value>notarticle</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+
+        <question>
+          <varname>sentence_quote_speaker</varname>
+          <questiontext>Who is being quoted? If several entities are being quoted please focus on the first one quoted.</questiontext>
+          <condition>
+            <![CDATA[
+			  (sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote)
+			  ]]>
+          </condition>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>A person (but not a spokesperson for an agency, organization or company)|elected official</text>
+                <value>person_official</value>
+              </category>
+              <category>
+                <text>A person (but not a spokesperson for an agency, organization or company)|an expert such as a scholar or scientist</text>
+                <value>person_expert</value>
+              </category>
+              <category>
+                <text>A person (but not a spokesperson for an agency, organization or company)|a witness</text>
+                <value>person_witness</value>
+              </category>
+              <category>
+                <text>A person (but not a spokesperson for an agency, organization or company)|"Man or Woman on the Street"</text>
+                <value>person_onstreet</value>
+              </category>
+              <category>
+                <text>A private company through a named or unnamed spokesperson</text>
+                <value>company</value>
+              </category>
+              <category>
+                <text>A government department or agency through a named or unnamed spokesperson (including inter-governmental organizations such as the United Nations or the European Union)</text>
+                <value>government</value>
+              </category>
+              <category>
+                <text>Any institution that is not governmental (such as a non-profit organization) through a named or unnamed spokesperson</text>
+                <value>ngo</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+
+        <question>
+          <iterator>
+              <dimensions>
+                <dimension>
+                   <name>SPEAKER</name>
+                   <instances>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>person</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>(sentence_quote_speaker==person_expert)|(sentence_quote_speaker==person_official)|(sentence_quote_speaker==person_witness)|(sentence_quote_speaker==person_onstreet)</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG1</key>
+                             <value>person being quoted</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG2</key>
+                             <value>person</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG3</key>
+                             <value>person</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>AUTOCOMPLETE</key>
+                             <value>person</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>company</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>sentence_quote_speaker==company</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG1</key>
+                             <value>company being quoted (not the name of the spokesperson even if he or she is mentioned)</value>
+                           </kvpair>                           
+                           <kvpair>
+                             <key>LONG2</key>
+                             <value>company (ignore name of spokesperson even if provided)</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG3</key>
+                             <value>company</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>AUTOCOMPLETE</key>
+                             <value>other</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>government</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>sentence_quote_speaker==government</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG1</key>
+                             <value>governmental or international agency being quoted (not the name of the spokesperson even if he or she is mentioned)</value>
+                           </kvpair>                           
+                           <kvpair>
+                             <key>LONG2</key>
+                             <value>agency (ignore name of spokesperson even if provided)</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG3</key>
+                             <value>agency</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>AUTOCOMPLETE</key>
+                             <value>other</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>ngo</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>sentence_quote_speaker==ngo</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG1</key>
+                             <value>non-governmental institution being quoted (not the name of the spokesperson even if he or she is mentioned)</value>
+                           </kvpair>                           
+                           <kvpair>
+                             <key>LONG2</key>
+                             <value>NGO (ignore name of spokesperson even if provided)</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG3</key>
+                             <value>NGO</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>AUTOCOMPLETE</key>
+                             <value>other</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                   </instances>
+                </dimension>
+              </dimensions>
+          </iterator>
+          <varname>sentence_quote_speaker_specific_{SPEAKER:SHORT}</varname>
+          <questiontext>Please specify the name of the {SPEAKER:LONG1}. Use the auto-complete where possible.</questiontext>
+          <condition>
+            <![CDATA[
+			  ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))&({SPEAKER:CONDITION}) 
+			  ]]>
+          </condition>
+          <valuetype>autocomplete</valuetype>
+          <options>
+            <sureLabel>Name of the {SPEAKER:LONG1}</sureLabel>
+            <sureLabelPlaceholder>Specify name of {SPEAKER:LONG2}</sureLabelPlaceholder>
+            <unsureLabel>Quoted {SPEAKER:LONG3} cannot be identified</unsureLabel>
+            <autoCompleteUrl>https://www.autocomplete.econlabs.org/api/auto/get{SPEAKER:AUTOCOMPLETE}</autoCompleteUrl>
+          </options>
+        </question>
+
+
+        <question>
+          <iterator>
+              <dimensions>
+                <dimension>
+                   <name>SENTENCE</name>
+                   <instances>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>ownwords</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>sentence==ownwords</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>author</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>quote</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value><![CDATA[
+                             ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))&(exists{sentence_quote_speaker_specific_*})
+                             ]]>
+                             </value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>quoted person or organization</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                   </instances>
+                </dimension>
+              </dimensions>
+          </iterator>
+          <varname>sentence_{SENTENCE:SHORT}_contenttype</varname>
+          <questiontext>The {SENTENCE:LONG} is ... </questiontext>
+          <condition>
+            <![CDATA[
+			  {SENTENCE:CONDITION}
+			  ]]>
+          </condition>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>... making a factual statement. Such a statement can be proven to be true or false through objective evidence.|Supporting evidence that proves the statement true or false already exists.</text>
+                <value>fact_existing</value>
+              </category>
+              <category>
+                <text>... making a factual statement. Such a statement can be proven to be true or false through objective evidence.|Supporting evidence that will prove the statement true or false will likely exist in the future (for example for a new scientific theory).</text>
+                <value>fact_pending</value>
+              </category>
+              <category>
+                <text>... stating an opinion|an emotion or an attitude</text>
+                <value>opinion_emotion</value>
+              </category>
+              <category>
+                <text>... stating an opinion|a value judgment</text>
+                <value>opinion_judgment</value>
+              </category>
+              <category>
+                <text>... stating an opinion|an unprovable belief (for example a statement such as "Destiny guides our lives.")</text>
+                <value>opinion_unprovable</value>
+              </category>
+              <category>
+                <text>... neither a factual statement nor an opinion.</text>
+                <value>neither</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+
+
+        <question>
+          <iterator>
+              <dimensions>
+                <dimension>
+                   <name>CONTENTTYPE</name>
+                   <instances>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>fact</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>factual statement</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>
+                            <![CDATA[
+                   			    (((sentence_quote_contenttype==fact_existing)|(sentence_quote_contenttype==fact_pending))&((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote)))|(((sentence_ownwords_contenttype==fact_existing)|(sentence_ownwords_contenttype==fact_pending))&(sentence==ownwords))                                
+			                ]]>
+                             </value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>opinion</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>opinion</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>
+                            <![CDATA[
+                   			    ((sentence_quote_contenttype==opinion_emotion|sentence_quote_contenttype==opinion_judgment|sentence_quote_contenttype==opinion_unprovable)&((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote)))|((sentence_ownwords_contenttype==opinion_emotion|sentence_ownwords_contenttype==opinion_judgment|sentence_ownwords_contenttype==opinion_unprovable)&(sentence==ownwords))                                
+			                ]]>
+                             </value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                   </instances>
+                </dimension>
+              </dimensions>
+          </iterator>
+          <varname>sentence_{CONTENTTYPE:SHORT}_about</varname>
+          <questiontext>What is this {CONTENTTYPE:LONG} about?</questiontext>
+          <condition>
+            {CONTENTTYPE:CONDITION}
+          </condition>
+          <valuetype>categorical</valuetype>
+          <content>
+            <categories>
+              <category>
+                <text>Event that is visibly unfolding in the real world|Act of nature|Specific act of nature (such as description of a particular earthquake)</text>
+                <value>actions_nature_specific</value>
+              </category>
+              <category>
+                <text>Event that is visibly unfolding in the real world|Act of nature|Statistical data (such as statistical data on eathquakes)</text>
+                <value>actions_nature_statistic</value>
+              </category>
+              <category>
+                <text>Event that is visibly unfolding in the real world|Act(s) of people|Specific people</text>
+                <value>actions_people_specific</value>
+              </category>
+              <category>
+                <text>Event that is visibly unfolding in the real world|Act(s) of people|Statistical data </text>
+                <value>actions_people_statistic</value>
+              </category>
+              <category>
+                <text>Characteristics of real-world people or objects|People</text>
+                <value>characteristics_people</value>
+              </category>
+              <category>
+                <text>Characteristics of real-world people or objects|Animals, natural or man-made objects</text>
+                <value>characteristics_objects</value>
+              </category>
+              <category>
+                <text>Abstract concepts|scientific theories and research</text>
+                <value>abstract_science</value>
+              </category>
+              <category>
+                <text>Abstract concepts|laws, rules and regulations</text>
+                <value>abstract_legal</value>
+              </category>
+              <category>
+                <text>Abstract concepts|law and regulations</text>
+                <value>abstract_legal</value>
+              </category>
+              <category>
+                <text>Abstract concepts|religion</text>
+                <value>abstract_religion</value>
+              </category>
+            </categories>
+          </content>
+        </question>
+
+        <question>
+          <iterator>
+              <dimensions>
+                <dimension>
+                   <name>PARTY</name>
+                   <instances>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>democrats</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>Democrats</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>republicans</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>Republicans</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                   </instances>
+                  </dimension>
+              </dimensions>
+          </iterator>
+            <varname>sentence_fact_istrue_{PARTY:SHORT}</varname>
+            <valuetype>categorical</valuetype>
+            <questiontext>What percent of {PARTY:LONG} would regard this factual statement as true based on their view of the evidence?</questiontext>
+            <condition>
+            <![CDATA[
+			    (
+            ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))
+            &
+            (((sentence_quote_contenttype==fact_existing)|(sentence_quote_contenttype==fact_pending))&(exists{sentence_fact_about}))
+          )
+          |
+          (
+            (sentence==ownwords)
+            &
+            (((sentence_ownwords_contenttype==fact_existing)|(sentence_ownwords_contenttype==fact_pending))&(exists{sentence_fact_about}))
+          )
+  			  ]]>
+          </condition>
+            <options>
+              <layout>horizontal</layout>
+              <outsideCategories>Unsure</outsideCategories>
+            </options>
+            <content>
+              <categories>
+                <category>
+                  <text>0%</text>
+                  <value>0</value>
+                </category>
+                <category>
+                  <text>20%</text>
+                  <value>20</value>
+                </category>
+                <category>
+                  <text>40%</text>
+                  <value>40</value>
+                </category>
+                <category>
+                  <text>60%</text>
+                  <value>60</value>
+                </category>
+                <category>
+                  <text>80%</text>
+                  <value>80</value>
+                </category>
+                <category>
+                  <text>100%</text>
+                  <value>100</value>
+                </category>
+              </categories>
+            </content>
+          </question>
+
+
+        <question>
+          <iterator>
+              <dimensions>
+                <dimension>
+                   <name>PARTY</name>
+                   <instances>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>democrats</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>Democrats</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>republicans</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>Republicans</value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                   </instances>
+                </dimension>
+              </dimensions>
+          </iterator>
+            <varname>sentence_opinion_{PARTY:SHORT}</varname>
+            <valuetype>categorical</valuetype>
+            <questiontext>What share of {PARTY:LONG} would agree with this opinion?</questiontext>
+            <condition>
+            <![CDATA[
+			    (
+            ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))
+            &
+            (((sentence_quote_contenttype==opinion_emotion)|(sentence_quote_contenttype==opinion_judgment)|(sentence_quote_contenttype==opinion_unprovable))&(exists{sentence_opinion_about}))
+          )
+          |
+          (
+            (sentence==ownwords)
+            &
+            (((sentence_ownwords_contenttype==opinion_emotion)|(sentence_ownwords_contenttype==opinion_judgment)|(sentence_ownwords_contenttype==opinion_unprovable))&(exists{sentence_opinion_about}))
+          )
+  			  ]]>
+          </condition>
+            <options>
+              <layout>horizontal</layout>
+              <outsideCategories>Unsure</outsideCategories>
+            </options>
+            <content>
+              <categories>
+                <category>
+                  <text>0%</text>
+                  <value>0</value>
+                </category>
+                <category>
+                  <text>20%</text>
+                  <value>20</value>
+                </category>
+                <category>
+                  <text>40%</text>
+                  <value>40</value>
+                </category>
+                <category>
+                  <text>60%</text>
+                  <value>60</value>
+                </category>
+                <category>
+                  <text>80%</text>
+                  <value>80</value>
+                </category>
+                <category>
+                  <text>100%</text>
+                  <value>100</value>
+                </category>
+              </categories>
+            </content>
+          </question>
+
+        <question>
+          <iterator>
+              <dimensions>
+                <dimension>
+                   <name>CONTENTTYPE</name>
+                   <instances>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>opinion</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>opinion</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>
+                            <![CDATA[
+			                (
+                                ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))
+                                &
+                                (((sentence_quote_contenttype==opinion_emotion)|(sentence_quote_contenttype==opinion_judgment)|(sentence_quote_contenttype==opinion_unprovable))&(exists{sentence_opinion_about}))
+                            )
+                            |
+                            (
+                                (sentence==ownwords)
+                                &
+                                (((sentence_ownwords_contenttype==opinion_emotion)|(sentence_ownwords_contenttype==opinion_judgment)|(sentence_ownwords_contenttype==opinion_unprovable))&(exists{sentence_opinion_about}))
+                            )
+  			                ]]>
+                             </value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                      <instance>
+                         <kvpairs>
+                           <kvpair>
+                             <key>SHORT</key>
+                             <value>fact</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>LONG</key>
+                             <value>factual statement</value>
+                           </kvpair>
+                           <kvpair>
+                             <key>CONDITION</key>
+                             <value>
+                            <![CDATA[
+			                (
+                                ((sentence==directquote)|(sentence==indirectquote)|(sentence==paraphrasequote))
+                                &
+                                (((sentence_quote_contenttype==fact_existing)|(sentence_quote_contenttype==fact_pending))&(exists{sentence_fact_about}))
+                            )
+                            |
+                            (
+                                (sentence==ownwords)
+                                &
+                                (((sentence_ownwords_contenttype==fact_existing)|(sentence_ownwords_contenttype==fact_pending))&(exists{sentence_fact_about}))
+                            )
+  			                ]]>
+                             </value>
+                           </kvpair>
+                         </kvpairs>
+                      </instance>
+                   </instances>
+                </dimension>
+              </dimensions>
+          </iterator>
+            <varname>sentence_{CONTENTTYPE:SHORT}_priority</varname>
+            <valuetype>categorical</valuetype>
+            <questiontext>Imagine a Democrat and a Republican who each summarize the news of the day. Who would be more likely to include this {CONTENTTYPE:LONG} in his or her summary?</questiontext>
+            <condition>
+            {CONTENTTYPE:CONDITION}
+          </condition>
+            <options>
+              <layout>horizontal</layout>
+              <outsideCategories>Unsure</outsideCategories>
+            </options>
+            <content>
+              <categories>
+                <category>
+                  <text>Much more likely the Democrat</text>
+                  <value>democrat++</value>
+                </category>
+                <category>
+                  <text>More likely the Democrat</text>
+                  <value>democrat+</value>
+                </category>
+                <category>
+                  <text>Equally likely</text>
+                  <value>equal</value>
+                </category>
+                <category>
+                  <text>More likely the Republican</text>
+                  <value>republican+</value>
+                </category>
+                <category>
+                  <text>Much more likely the Republican</text>
+                  <value>republican++</value>
+                </category>
+              </categories>
+            </content>
+          </question>
+
+
+      </questions>
+    </module>
+  </modules>
+
+
+  <tasks>
+    <task>
+      <content>paragraph.html</content>
+      <taskid>paragraph</taskid>
+      <modules>s1 s2 s3</modules>
+    </task>
+  </tasks>
+
+  <hits>
+    <hit>
+      <hitid>1</hitid>
+      <tasks>paragraph</tasks>
+    </hit>
+    <hit>
+      <hitid>2</hitid>
+      <tasks>paragraph</tasks>
+    </hit>
+  </hits>
+
+  <documents>
+    <document>
+      <name>paragraph.html</name>
+      <content><![CDATA[
+	  <style>
+		.yellow {
+			background-color: yellow
+			}
+		.green {
+			background-color: #8FBC8F
+			}			
+	  </style>
+	  <script>
+	  var highlight=function(sentenceID){
+		var tags=document.getElementsByTagName("SPAN");
+		for (let tag of tags) {
+			if (tag.getAttribute("sentenceMarker")==sentenceID){
+                tag.className="yellow";
+			}
+			else{
+				tag.className="";
+			}
+		}
+	  }
+	  </script>
+      <p>
+      <span sentenceMarker="s1"> Most of the money appears to have come online and from smaller contributors, with relatively few five- and six-figure checks, especially once the calendar turned to December.</span>
+      <span sentenceMarker="s2">One $100,000 check in early December came from Elaine J. Wold, a major Republican donor in Florida.</span>
+      </p>
+      <p>
+      <span sentenceMarker="s3">Though his race was over, Mr. Trump’s voracious online fund-raising from Nov. 24 through the end of the year even outpaced that of the two Republican senators, Kelly Loeffler and David Perdue, who were competing in the Georgia runoff elections that would determine control of the chamber.</span>
+      </p>
+      ]]></content>
+    </document>
+  </documents>
+</xml>
