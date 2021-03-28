@@ -124,6 +124,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#chits">cHits</a><ul>
+<li><a class="reference internal" href="#exclusions">Exclusions</a></li>
 <li><a class="reference internal" href="#data-download">Data Download</a></li>
 <li><a class="reference internal" href="#task-conditions">Task Conditions</a></li>
 </ul>
@@ -239,6 +240,11 @@
    cHits
   </a>
   <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exclusions">
+     Exclusions
+    </a>
+   </li>
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#data-download">
      Data Download
@@ -932,6 +938,32 @@ be called when the user switches to this module with value <code class="docutils
 </pre></div>
 </div>
 <p>In this example, the three tasks 1 to 3 are assigned to three cHITs. This implies triple data entry which makes workers potentially eligible for a bonus payment (see <a class="reference internal" href="#bonus"><span class="std std-ref">Bonus</span></a> ).</p>
+<div class="section" id="exclusions">
+<h3>Exclusions<a class="headerlink" href="#exclusions" title="Permalink to this headline">¶</a></h3>
+<p>Each cHIT may specify a set of exclusions, a whitespace separated list of other HIT IDs such that if a worker has completed any of the HITs listed as exclusions she may not complete the cHIT that listed those exclusions.
+Perhaps an example would be most informative. Consider the following HITs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">hits</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">hit</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">hitid</span><span class="o">&gt;</span><span class="mi">1</span><span class="o">&lt;/</span><span class="n">hitid</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">exclusions</span><span class="o">&gt;</span><span class="mi">2</span><span class="o">&lt;/</span><span class="n">exclusions</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">tasks</span><span class="o">&gt;</span>
+          <span class="mi">1</span>
+          <span class="mi">2</span>
+    <span class="o">&lt;/</span><span class="n">tasks</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">hit</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">hit</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">hitid</span><span class="o">&gt;</span><span class="mi">2</span><span class="o">&lt;/</span><span class="n">hitid</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">tasks</span><span class="o">&gt;</span>
+            <span class="mi">1</span>
+    <span class="o">&lt;/</span><span class="n">tasks</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">hit</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">hits</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>In this case, a worker who first completes cHIT 2 may not then complete cHIT 1, since cHIT 1 excludes cHIT 2. However, since HIT 2 lists no exclusions, a worker who first completes HIT 1 would then be permitted to complete HIT 2.
+There is no enforcement that exclusions be symmetric.</p>
+<p>Note: a worker who has already submitted an invalid cHIT (a cHIT that did not pass <a class="reference internal" href="#validation"><span class="std std-ref">cHIT Validation and Automatic Reassignments</span></a>) is excluded from all future cHITs.</p>
+</div>
 <div class="section" id="data-download">
 <h3>Data Download<a class="headerlink" href="#data-download" title="Permalink to this headline">¶</a></h3>
 <p>When you download data in the administrator’s <a class="reference internal" href="admin.html#survey-tab"><span class="std std-ref">Survey Tab</span></a> every question will be coded by <code class="docutils literal notranslate"><span class="pre">task_id</span></code>, <code class="docutils literal notranslate"><span class="pre">module_name</span></code> and <code class="docutils literal notranslate"><span class="pre">varname</span></code>. Example:</p>
@@ -1237,7 +1269,7 @@ above example, each task has a single module:</p>
 order in the latter module.</p>
 </div>
 <div class="section" id="chit-validation-and-automatic-reassignments">
-<h2>cHIT Validation and Automatic Reassignments<a class="headerlink" href="#chit-validation-and-automatic-reassignments" title="Permalink to this headline">¶</a></h2>
+<span id="validation"></span><h2>cHIT Validation and Automatic Reassignments<a class="headerlink" href="#chit-validation-and-automatic-reassignments" title="Permalink to this headline">¶</a></h2>
 <p>Some cHITs require training that not all workers might pass. This poses a problem because (a) you are left with incomplete data and (b) if you use bonuses and double data entry
 you might inadvertently underpay matched workers who completed the same tasks as the worker who did not pass validation.</p>
 <p>You can avoid underpayments by marking training questions as <code class="docutils literal notranslate"><span class="pre">aprioripermissable</span></code>. This will ensure that workers are only compared to the set of workers who pass validation.</p>

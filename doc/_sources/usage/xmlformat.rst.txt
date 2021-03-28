@@ -571,6 +571,7 @@ The ``content`` value refers to a document that is defined under ``documents``:
 Any HTML content can be provided under the content property (you can even use it to load external images through ``<img src="http://my_other_domain/my_image.png">``) but you need to encapsulate your HTML in a CDATA tag in order to produce valid XML.
 The ``complex_modules.xml`` survey provides an example of very rich content panels.
 
+
 Dynamic content
 +++++++++++++++
 
@@ -702,6 +703,37 @@ A cHIT is a collection of tasks. This is what the Turk worker will see when clic
 
 In this example, the three tasks 1 to 3 are assigned to three cHITs. This implies triple data entry which makes workers potentially eligible for a bonus payment (see :ref:`bonus` ).
 
+
+Exclusions
++++++++++++++++
+
+Each cHIT may specify a set of exclusions, a whitespace separated list of other HIT IDs such that if a worker has completed any of the HITs listed as exclusions she may not complete the cHIT that listed those exclusions. 
+Perhaps an example would be most informative. Consider the following HITs:
+
+::
+
+  <hits>
+    <hit>
+      <hitid>1</hitid>
+      <exclusions>2</exclusions>
+      <tasks>
+	    1
+	    2
+      </tasks>
+    </hit>
+    <hit>
+      <hitid>2</hitid>
+      <tasks>
+	      1
+      </tasks>
+    </hit> 
+  </hits>
+
+
+In this case, a worker who first completes cHIT 2 may not then complete cHIT 1, since cHIT 1 excludes cHIT 2. However, since HIT 2 lists no exclusions, a worker who first completes HIT 1 would then be permitted to complete HIT 2. 
+There is no enforcement that exclusions be symmetric.
+
+Note: a worker who has already submitted an invalid cHIT (a cHIT that did not pass :ref:`validation`) is excluded from all future cHITs.
 
 Data Download
 +++++++++++++
@@ -1029,6 +1061,9 @@ above example, each task has a single module:
 
 The two modules ``numbers`` and ``numbersreverse`` are isomorphic and contain the same questions except that they appear in reverse 
 order in the latter module.
+
+
+.. _validation:
 
 cHIT Validation and Automatic Reassignments
 --------------------------------------------
