@@ -24,9 +24,6 @@ class CResponseController(object):
     def get_hits_for_worker(self, workerid):
         d = self.db.cresponses.find({'workerid' : workerid}, {'hitid' : 1})
         return [r['hitid'] for r in d]
-    def get_hits_for_worker_with_invalids(self, workerid):
-        d = self.db.cresponses.find({'workerid' : workerid}, {'hitid' : 1})
-        return [r['hitid'] for r in d]
     def write_response_to_csv(self, csvwriter, completed_workers=[]) :
         for d in self.db.cresponses.find() :
             if d['workerid'] in completed_workers :

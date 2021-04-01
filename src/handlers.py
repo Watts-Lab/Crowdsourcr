@@ -555,7 +555,7 @@ class CHITViewHandler(BaseHandler):
                                       "num_tasks" : len(chit.tasks)})
             else:
                 #check if this worker already had an invalid hit
-                badWorkers=self.cresponse_controller.get_workers_with_completed_hits_validation_notpassed()
+                badWorkers=self.chit_controller.get_workers_with_completed_hits_validation_notpassed()
                 if workerid in badWorkers:
                     self.logging.info('no next hit')
                     #self.clear_cookie('workerid')
