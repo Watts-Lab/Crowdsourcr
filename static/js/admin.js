@@ -76,6 +76,10 @@ $('#addAdmin').click(function(evt) {
                 if ($('#editHitMinCompleted').val()==""){
                     $('#editHitMinCompleted').val(100);
                 }
+
+                $('#editCustomQualification').val($('#staticCustomQualification').val());
+                $('#editCustomQualificationMinScore').val($('#staticCustomQualificationMinScore').val());
+
                 $('#editInvalidReplacementIntervalSeconds').val($('#staticInvalidReplacementIntervalSeconds').val());
                 if ($('#editInvalidReplacementIntervalSeconds').val()==""){
                     $('#editInvalidReplacementIntervalSeconds').val(100);
@@ -97,14 +101,17 @@ $('#addAdmin').click(function(evt) {
                             locales : $('#editHitLocales').val(),
                             pcapproved : $('#editHitPCapproved').val(),
                             mincompleted : $('#editHitMinCompleted').val(),
+                            customQualification: $('#editCustomQualification').val(),
+                            customQualificationMinScore: $('#editCustomQualificationMinScore').val(),
                             invalidReplacementIntervalSeconds : $('#editInvalidReplacementIntervalSeconds').val(),
                         };
 			console.log(mturk_info);
 			for (var key in mturk_info) {
-              if (mturk_info.hasOwnProperty(key) && !mturk_info[key]) {
+                if (key==="customQualification"){continue;}
+                if (mturk_info.hasOwnProperty(key) && !mturk_info[key]) {
 					$('#editHitWarning').show();
                   return;
-              }
+                }
             }
 			$('#editHitWarning').hide();
 			$('#editHitServerWarning').hide();
@@ -240,6 +247,8 @@ $('#addAdmin').click(function(evt) {
 								$('#staticHitLocales').val(data.turkinfo.locales);
 								$('#staticHitPCapproved').val(data.turkinfo.pcapproved);
                                 $('#staticHitMinCompleted').val(data.turkinfo.mincompleted);
+                                $('#staticCustomQualification').val(data.turkinfo.customQualification);
+                                $('#staticCustomQualificationMinScore').val(data.turkinfo.customQualificationMinScore);
                                 $('#staticInvalidReplacementIntervalSeconds').val(data.turkinfo.invalidReplacementIntervalSeconds);
                           }
                           if (data.turkinfo.running) {

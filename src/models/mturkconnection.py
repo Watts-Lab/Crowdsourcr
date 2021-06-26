@@ -24,6 +24,8 @@ class MTurkConnection:
                  lifetime="43200",
                  pcapproved="95",
                  mincompleted="100",
+                 customQualification="",
+                 customQualificationMinScore="100",
                  invalidReplacementIntervalSeconds=600,
                  environment="development",
                  bonus=0.0,
@@ -42,6 +44,8 @@ class MTurkConnection:
         self.lifetime=lifetime
         self.pcapproved=pcapproved
         self.mincompleted=mincompleted
+        self.customQualification=customQualification
+        self.customQualificationMinScore=customQualificationMinScore
         self.invalidReplacementIntervalSeconds=invalidReplacementIntervalSeconds
         environments = {
             "production": {
@@ -102,6 +106,8 @@ class MTurkConnection:
                  'locales': self.locales,
                  'pcapproved':self.pcapproved,
                  'mincompleted':self.mincompleted,
+                 'customQualification': self.customQualification,
+                 'customQualificationMinScore': self.customQualificationMinScore,
                  'invalidReplacementIntervalSeconds':self.invalidReplacementIntervalSeconds}
     @classmethod
     def deserialize(cls, d):  
@@ -144,15 +150,7 @@ class MTurkConnection:
             </Question>
             </QuestionForm>
             """.format(title = self.title, description = self.description, url1 = url, url2 = url)
-            hitinfo = self.client.create_hit(
-                MaxAssignments=max_assignments,
-                Title=self.title,
-                Description=self.description,
-                LifetimeInSeconds=int(self.lifetime),
-                AssignmentDurationInSeconds=60 * 60 * 2,
-                Keywords=self.keywords,
-                Reward=str(self.hitpayment),
-                QualificationRequirements=[
+            qualification_requirements=[
                     # in the US
                     {
                         'QualificationTypeId': "00000000000000000071",
@@ -171,10 +169,28 @@ class MTurkConnection:
                         'Comparator': "GreaterThanOrEqualTo",
                         'IntegerValues': [int(self.mincompleted)]
                     },
-                ],
+                ]
+            if self.customQualification.strip():
+               qualification_requirements.append(
+                    {
+                        'QualificationTypeId': self.customQualification.trim(),
+                        'Comparator': "GreaterThanOrEqualTo",
+                        'IntegerValues': [int(self.customQualificationMinScore)]
+                    }                   
+               )
+            hitinfo = self.client.create_hit(
+                MaxAssignments=max_assignments,
+                Title=self.title,
+                Description=self.description,
+                LifetimeInSeconds=int(self.lifetime),
+                AssignmentDurationInSeconds=60 * 60 * 2,
+                Keywords=self.keywords,
+                Reward=str(self.hitpayment),
+                QualificationRequirements=qualification_requirements,
                 Question = question_xml.replace("QUESTION_URL", url)
                 # Question='<p>'+self.description+' To begin, navigate to the following url: <a href="'+url+'">%('+url+')s</a>.</p>'
             )
+
 
             self.hit_type_id = hitinfo['HIT']['HITTypeId']
             self.hit_id = hitinfo['HIT']['HITId']

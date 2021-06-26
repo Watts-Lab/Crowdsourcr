@@ -388,6 +388,14 @@ class RecruitingInfoHandler(BaseHandler):
                     errorList.append("Workers min. completed HITs has to be a non-negative integer.")
             except ValueError:
                 errorList.append("Workers min. completed HITs has to be a non-negative integer.")
+            if recruiting_info['customQualification'].strip()!=recruiting_info['customQualification']:
+                errorList.append("Custom qualification cannot contain white space.")
+            try:
+                customQualificationMinScore=int(recruiting_info['customQualificationMinScore'])
+                if customQualificationMinScore<0 or customQualificationMinScore>100:
+                    errorList.append("Minimum custom qualification score has to be an integer between 0 and 100.")
+            except ValueError:
+                errorList.append("Minimum custom qualification score has to be an integer between 0 and 100.")
             try:
                 invalidReplacementIntervalSeconds=int(recruiting_info['invalidReplacementIntervalSeconds'])
                 if invalidReplacementIntervalSeconds<0:
