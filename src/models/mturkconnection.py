@@ -173,7 +173,7 @@ class MTurkConnection:
             if self.customQualification.strip():
                qualification_requirements.append(
                     {
-                        'QualificationTypeId': self.customQualification.trim(),
+                        'QualificationTypeId': self.customQualification.strip(),
                         'Comparator': "GreaterThanOrEqualTo",
                         'IntegerValues': [int(self.customQualificationMinScore)]
                     }                   
