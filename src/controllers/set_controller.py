@@ -3,7 +3,7 @@ from models import SET
 class SetController(object):
     def __init__(self, db):
         self.db = db
-        self.db.sets.ensure_index('name', unique=False)
+        self.db.sets.create_index('name', unique=False)
     def create(self, d):
         set = SET.deserialize(d)
         self.db.sets.insert(set.serialize())

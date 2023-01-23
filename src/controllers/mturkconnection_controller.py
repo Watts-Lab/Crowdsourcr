@@ -4,7 +4,7 @@ from models import MTurkConnection
 class MTurkConnectionController(object):
     def __init__(self, db):
         self.db = db
-        self.db.mturkconnections.ensure_index('email', unique=True)
+        self.db.mturkconnections.create_index('email', unique=True)
 
     def create(self, d):
         mtconn = MTurkConnection(**d)

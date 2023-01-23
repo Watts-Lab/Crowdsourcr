@@ -3,7 +3,7 @@ from models import CType
 class CTypeController(object) :
     def __init__(self, db) :
         self.db = db
-        self.db.ctypes.ensure_index('name', unique=True)
+        self.db.ctypes.create_index('name', unique=True)
     def get_names(self) :
         res = self.db.ctypes.find({}, {'name' : True})
         return [r['name'] for r in res]

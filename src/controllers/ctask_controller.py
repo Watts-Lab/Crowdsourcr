@@ -3,7 +3,7 @@ from models import CTask
 class CTaskController(object):
     def __init__(self, db):
         self.db = db
-        self.db.ctasks.ensure_index('taskid', unique=True)
+        self.db.ctasks.create_index('taskid', unique=True)
     def create(self, d):
         ctask = CTask.deserialize(d)
         self.db.ctasks.insert(ctask.serialize())
@@ -54,7 +54,7 @@ class CTaskController(object):
 class CTaskController(object) :
     def __init__(self, db) :
         self.db = db
-        self.db.ctasks.ensure_index([('type_name', 1), ('name', 1)],
+        self.db.ctasks.create_index([('type_name', 1), ('name', 1)],
                                     unique=True)
     def get_names(self, type_name) :
         res = self.db.ctasks.find({'type_name' : type_name}, {'name' : True})

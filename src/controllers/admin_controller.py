@@ -4,7 +4,7 @@ import app_config
 class AdminController(object):
     def __init__(self, db) :
         self.db = db
-        self.db.admin.ensure_index('email', unique=True)
+        self.db.admin.create_index('email', unique=True)
     def get_emails(self) :
         res = self.db.admin.find({}, {'email' : True})
         return [r['email'] for r in res]

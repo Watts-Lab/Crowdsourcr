@@ -1,7 +1,7 @@
 class CDocumentController(object):
     def __init__(self, db):
         self.db = db
-        self.db.cdocs.ensure_index('name', unique=True)
+        self.db.cdocs.create_index('name', unique=True)
     def create(self, name, d):
         self.db.cdocs.insert({'name' : name, 'content' : d})
     def get_document_by_name(self, name):
