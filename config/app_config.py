@@ -1,3 +1,4 @@
+import os
 superadmins = []
 
 google = {}
@@ -6,6 +7,7 @@ port = 8080
 environment = "development"
 db_name="news_crowdsourcing"
 make_payments = True
+HERE = os.path.dirname(__file__)
 
 aws={}
 
@@ -19,7 +21,7 @@ def populate_config(filename):
     global aws
 
     import json
-    with open("../config/"+filename) as json_file: 
+    with open(os.path.join(HERE, "./config/", filename)) as json_file: 
         data = json.load(json_file)
         superadmins=data["superadmins"]
         google=data["google"]

@@ -2,7 +2,7 @@
 class CurrentStatusController(object):
     def __init__(self, db):
         self.db = db
-        self.db.currentstatus.ensure_index('workerid', unique=True)
+        self.db.currentstatus.create_index('workerid', unique=True)
     def outstanding_hits(self) :
         d = self.db.currentstatus.find({}, {'hitid' : 1})
         return [r['hitid'] for r in d]
