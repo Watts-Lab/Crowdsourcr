@@ -16,7 +16,7 @@ class CHITController(object):
         self.db.chits.ensure_index('hitid', unique=True)
     def create(self, d):
         chit = CHIT.deserialize(d)
-        self.db.chits.insert(chit.serialize())
+        self.db.chits.insert_one(chit.serialize())
         return chit
     def get_chit_by_id(self, hitid):
         d = self.db.chits.find_one({'hitid' : hitid})
@@ -49,7 +49,7 @@ class CHITController(object):
 
 
         if d and workerid :
-            self.db.chitloads.insert({'workerid' : workerid,
+            self.db.chitloads.insert_one({'workerid' : workerid,
                                       'time' : datetime.datetime.utcnow(),
                                       'hitid' : d['hitid']})
 

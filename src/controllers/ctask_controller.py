@@ -6,7 +6,7 @@ class CTaskController(object):
         self.db.ctasks.ensure_index('taskid', unique=True)
     def create(self, d):
         ctask = CTask.deserialize(d)
-        self.db.ctasks.insert(ctask.serialize())
+        self.db.ctasks.insert_one(ctask.serialize())
         return ctask
     def get_task_ids(self) :
         return [r['taskid'] for r in self.db.ctasks.find({}, {'taskid' : 1})]
@@ -76,7 +76,7 @@ class CTaskController(object) :
                   name=name,
                   content=content,
                   live=live)
-        self.db.ctasks.insert(c.to_dict())
+        self.db.ctasks.insert_one(c.to_dict())
         return c
     def add_response(self, task, worker_name, response) :
         r = CResponse(submitted=datetime.datetime.now(),

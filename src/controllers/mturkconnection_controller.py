@@ -46,7 +46,7 @@ class MTurkConnectionController(object):
         already_paid = [a['workerid'] for a in ap_sel]
         paid_bonus = await mt_conn.end_run_async(bonus=bonus, already_paid=already_paid)
         for pb_info in paid_bonus :
-            self.db.paid_bonus.insert(pb_info)
+            self.db.paid_bonus.insert_one(pb_info)
         self.update(mt_conn)
 
     def get_all(self, environment="development"):

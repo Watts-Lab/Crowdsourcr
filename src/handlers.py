@@ -291,7 +291,7 @@ class RecruitingEndHandler(BaseHandler):
             worker_bonus_info =  helpers.calculate_worker_bonus_info(possible_bonus_points, bonusDetails, moduleVarnameValuetype)
             self.db.bonus_info.drop()
             for wid, info in worker_bonus_info.items() :
-                self.db.bonus_info.insert({'workerid' : wid,
+                self.db.bonus_info.insert_one({'workerid' : wid,
                                            'percent' : info['pct'],
                                            'explanation' : info['exp'],
                                            'possible' : info['poss'],

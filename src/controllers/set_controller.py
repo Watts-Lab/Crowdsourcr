@@ -6,7 +6,7 @@ class SetController(object):
         self.db.sets.ensure_index('name', unique=False)
     def create(self, d):
         set = SET.deserialize(d)
-        self.db.sets.insert(set.serialize())
+        self.db.sets.insert_one(set.serialize())
         return set
     def get_sets_names(self) :
         return [r['name'] for r in self.db.sets.find({}, {'name' : 1})]

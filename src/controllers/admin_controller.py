@@ -25,7 +25,7 @@ class AdminController(object):
             raise
     def create(self, d) :
         c = models.Admin.from_dict(d)
-        self.db.admin.insert(c.to_dict())
+        self.db.admin.insert_one(c.to_dict())
         return c
     def remove(self, d) :
         c = self.get_by_email(d['email'])

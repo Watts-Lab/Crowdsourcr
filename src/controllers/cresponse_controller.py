@@ -12,7 +12,7 @@ class CResponseController(object):
         #                                unique=True)
     def create(self, d):
         cresponse = CResponse.deserialize(d)
-        self.db.cresponses.insert(cresponse.serialize())
+        self.db.cresponses.insert_one(cresponse.serialize())
         return cresponse
     def append_completed_task_info(self, **d) :
         d['num_completed_tasks'] = self.db.cresponses.count_documents({'submitStatus':1})

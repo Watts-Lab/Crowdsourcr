@@ -14,7 +14,7 @@ class CTypeController(object) :
         return {name : self.get_by_name(name) for name in names}
     def create(self, d) :
         c = CType.from_dict(d)
-        self.db.ctypes.insert(c.to_dict())
+        self.db.ctypes.insert_one(c.to_dict())
         return c
     def evaluate_module_conditions(self, module_responses={}):
         # module -> workerid -> {varname: response_value}
