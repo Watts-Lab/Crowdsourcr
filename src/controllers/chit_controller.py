@@ -13,7 +13,7 @@ class CHITController(object):
 
     def __init__(self, db):
         self.db = db
-        self.db.chits.ensure_index('hitid', unique=True)
+        self.db.chits.create_index('hitid', unique=True)
     def create(self, d):
         chit = CHIT.deserialize(d)
         self.db.chits.insert_one(chit.serialize())
