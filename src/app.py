@@ -34,9 +34,9 @@ def random256() :
 
 class Application(tornado.web.Application):
     def __init__(self, drop):
-        self.db = pymongo.MongoClient()[app_config.db_name]
+        self.db = pymongo.MongoClient(app_config.db_host)[app_config.db_name]
         if drop == "REALLYREALLY" :
-            pymongo.MongoClient().drop_database(app_config.db_name)
+            pymongo.MongoClient(app_config.db_host).drop_database(app_config.db_name)
             print("Cleared.")
             sys.exit(0)
 

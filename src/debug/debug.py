@@ -27,7 +27,7 @@ def mapIsoName(name):
 
 def main():
     app_config.populate_config(config_filename)
-    db = pymongo.MongoClient()[app_config.db_name]
+    db = pymongo.MongoClient(app_config.db_host)[app_config.db_name]
     print("MODULES:")  
     d=db.ctypes.find({},{'name':1})
     for row in d:

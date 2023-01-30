@@ -28,6 +28,7 @@ def populate_config(filename):
         port=data["port"]
         environment=data["environment"] if "environment" in data else environment
         db_name=data["db_name"]
+        db_host=[data['db_host']] if "host" in data else "localhost:27017"
         make_payments=data["make_payments"]
         aws=data["aws"]
        
