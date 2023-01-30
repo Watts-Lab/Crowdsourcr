@@ -19,6 +19,7 @@ def populate_config(filename):
     global db_name
     global make_payments
     global aws
+    global db_host
 
     import json
     with open(os.path.join(HERE, "../config/", filename)) as json_file: 
